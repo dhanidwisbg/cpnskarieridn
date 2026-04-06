@@ -1,13 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
+import midtransClient from 'midtrans-client';
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 let snap;
 
-async function getMidtransSnap() {
+function getMidtransSnap() {
   if (snap) return snap;
-  const midtransClient = await import('midtrans-client');
   snap = new midtransClient.Snap({
     isProduction: process.env.MIDTRANS_IS_PRODUCTION === 'true',
     serverKey: process.env.MIDTRANS_SERVER_KEY,
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     }
 
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-    const midtransSnap = await getMidtransSnap();
+    const midtransSnap = getMidtransSnap();
 
     const orderId = `CPNS-${userId.slice(0, 8)}-${Date.now()}`;
 
