@@ -1,0 +1,75 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+@theme {
+  --color-azure: #007FFF;
+  --color-azure-dark: #005BBF;
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply font-jakarta bg-slate-50 text-slate-900 antialiased;
+    overscroll-behavior-y: none;
+  }
+
+  /* Mobile scrollbar - thinner */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-azure/20 rounded-full;
+  }
+}
+
+@layer utilities {
+  .mesh-gradient {
+    background-color: #0066CC;
+    background-image:
+      radial-gradient(at 0% 0%, hsla(212, 100%, 55%, 1) 0, transparent 60%),
+      radial-gradient(at 100% 0%, hsla(195, 100%, 60%, 1) 0, transparent 60%),
+      radial-gradient(at 50% 100%, hsla(225, 100%, 45%, 1) 0, transparent 60%);
+  }
+
+  .glass {
+    @apply bg-white/80 backdrop-blur-xl border border-white/30 shadow-xl;
+  }
+
+  /* Safe area for iOS notch/home indicator */
+  .pb-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  .pt-safe {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.45s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Staggered animation classes */
+.stagger-1 { animation-delay: 0.05s; opacity: 0; }
+.stagger-2 { animation-delay: 0.1s;  opacity: 0; }
+.stagger-3 { animation-delay: 0.15s; opacity: 0; }
+.stagger-4 { animation-delay: 0.2s;  opacity: 0; }
+.stagger-5 { animation-delay: 0.25s; opacity: 0; }
