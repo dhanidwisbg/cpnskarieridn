@@ -5,7 +5,7 @@ const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 let snap;
-
+//
 function getMidtransSnap() {
   if (snap) return snap;
   snap = new midtransClient.Snap({
