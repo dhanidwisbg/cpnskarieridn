@@ -183,7 +183,7 @@ function App({ user, onLogout, onUpgrade }) {
 
         {/* Footer */}
         <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)', borderTop: '1px solid #e2e8f0', padding: '10px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 -4px 20px rgba(0,0,0,0.06)' }}>
-          <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>© CPUsKarier</span>
+          <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>© CPNSKarier</span>
           <button onClick={() => setShowLogoutConfirm(true)} style={{ display: 'flex', alignItems: 'center', gap: 5, border: 'none', background: '#fef2f2', borderRadius: 999, padding: '6px 10px', cursor: 'pointer', color: '#ef4444', fontSize: 11, fontWeight: 700, fontFamily: 'inherit' }}>
             <LogOut size={12} />Keluar
           </button>

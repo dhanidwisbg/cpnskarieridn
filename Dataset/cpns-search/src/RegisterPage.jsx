@@ -121,7 +121,7 @@ export default function RegisterPage({ onBack }) {
         </div>
 
         <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, marginTop: 24, fontWeight: 600, position: 'relative', zIndex: 1 }}>
-          © CPUsKarier · Semua data formasi resmi
+          © CPNSKarier · Semua data formasi resmi
         </p>
 
         <style>{`
@@ -162,7 +162,7 @@ export default function RegisterPage({ onBack }) {
           style={{ height: 72, objectFit: 'contain', filter: 'brightness(0) invert(1)', display: 'block', margin: '0 auto 12px' }}
         />
         <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 13, fontWeight: 500, margin: 0 }}>
-          Platform Pencarian Formasi CPUs Indonesia
+          Platform Pencarian Formasi CPNS Indonesia
         </p>
       </div>
 
@@ -189,7 +189,7 @@ export default function RegisterPage({ onBack }) {
             fontFamily: 'inherit', padding: 0, marginBottom: 16,
           }}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 5l-7 7 7 7" /></svg>
           Kembali ke Login
         </button>
 
@@ -378,7 +378,7 @@ export default function RegisterPage({ onBack }) {
 
       {/* Footer */}
       <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, marginTop: 24, fontWeight: 600, position: 'relative', zIndex: 1 }}>
-        © CPUsKarier · Semua data formasi resmi
+        © CPNSKarier · Semua data formasi resmi
       </p>
 
       <style>{`

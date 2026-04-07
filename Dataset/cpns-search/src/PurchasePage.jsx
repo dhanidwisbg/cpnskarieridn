@@ -189,7 +189,7 @@ export default function PurchasePage({ user, onBack }) {
 
       {/* Footer */}
       <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, marginTop: 24, fontWeight: 600, position: 'relative', zIndex: 1 }}>
-        © CPUsKarier · Semua data formasi resmi
+        © CPNSKarier · Semua data formasi resmi
       </p>
 
       <style>{`
