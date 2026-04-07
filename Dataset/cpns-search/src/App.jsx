@@ -391,6 +391,13 @@ function App({ user, onLogout, onUpgrade }) {
       {/* RESULTS */}
       <div className="results-section">
 
+        {/* Hasil Pencarian / Counter */}
+        {(query || activeFilters > 0) && (
+          <div style={{ marginBottom: 16, fontSize: 13, color: '#64748b', fontWeight: 600 }}>
+            Ditemukan <span style={{ color: '#0f172a', fontWeight: 800 }}>{results.length.toLocaleString()}</span> formasi
+            {query && <span> untuk "<span style={{ color: '#0f172a', fontWeight: 800 }}>{query}</span>"</span>}
+          </div>
+        )}
 
         {/* Cards */}
         <div className="results-grid">
