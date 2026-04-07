@@ -2,6 +2,7 @@ import { StrictMode, useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
+import LandingPage from './LandingPage.jsx'
 import LoginPage from './LoginPage.jsx'
 import RegisterPage from './RegisterPage.jsx'
 import PurchasePage from './PurchasePage.jsx'
@@ -9,7 +10,7 @@ import { supabase } from './supabase'
 
 function Root() {
   const [user, setUser] = useState(undefined); // undefined = loading
-  const [page, setPage] = useState('app');
+  const [page, setPage] = useState('landing'); // 'landing' | 'login' | 'register' | 'app' | 'purchase'
 
   useEffect(() => {
     let mounted = true;
@@ -19,6 +20,8 @@ function Root() {
         const { data: { session } } = await supabase.auth.getSession();
         if (mounted) {
           setUser(session?.user ?? null);
+          // Jika sudah login, langsung ke app
+          if (session?.user) setPage('app');
         }
       } catch {
         if (mounted) setUser(null);
@@ -30,6 +33,7 @@ function Root() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (mounted) {
         setUser(session?.user ?? null);
+        if (session?.user) setPage('app');
       }
     });
 
@@ -49,17 +53,17 @@ function Root() {
     );
   }
 
-  // Not logged in
+  // Not logged in — routing antar halaman publik
   if (!user) {
-    return page === 'register'
-      ? <RegisterPage onBack={() => setPage('app')} />
-      : <LoginPage onLogin={(u) => setUser(u)} onRegister={() => setPage('register')} />;
+    if (page === 'register') return <RegisterPage onBack={() => setPage('login')} />;
+    if (page === 'login')    return <LoginPage onLogin={(u) => setUser(u)} onRegister={() => setPage('register')} onBack={() => setPage('landing')} />;
+    return <LandingPage onLogin={() => setPage('login')} />;
   }
 
   // Logged in
   return page === 'purchase'
     ? <PurchasePage user={user} onBack={() => setPage('app')} />
-    : <App user={user} onLogout={() => setUser(null)} onUpgrade={() => setPage('purchase')} />;
+    : <App user={user} onLogout={() => { setUser(null); setPage('landing'); }} onUpgrade={() => setPage('purchase')} />;
 }
 
 createRoot(document.getElementById('root')).render(

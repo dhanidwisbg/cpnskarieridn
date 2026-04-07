@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -1355,7 +1355,7 @@
         <li><a href="#faq">FAQ</a></li>
       </ul>
       <div class="nav-cta-wrap">
-        <a id="nav-cta-btn" href="https://cpnskarieridn.vercel.app" target="_blank" rel="noopener" class="btn nav-cta">Mulai
+        <a id="nav-cta-btn" href="#" data-app-link class="btn nav-cta">Mulai
           Sekarang</a>
       </div>
       <button class="nav-hamburger" id="hamburgerBtn" aria-label="Menu">
@@ -1369,7 +1369,7 @@
     <a href="#features" onclick="closeMobileMenu()">Fitur</a>
     <a href="#harga" onclick="closeMobileMenu()">Harga</a>
     <a href="#faq" onclick="closeMobileMenu()">FAQ</a>
-    <a href="https://cpnskarieridn.vercel.app" target="_blank" rel="noopener" onclick="closeMobileMenu()"
+    <a href="#" data-app-link onclick="closeMobileMenu()"
       style="color: var(--blue); border-bottom: none; background: var(--blue-pale); padding: 12px 16px; border-radius: 10px; text-align: center;">Mulai
       Sekarang →</a>
   </div>
@@ -1397,7 +1397,7 @@
       </p>
 
       <div class="hero-actions">
-        <a href="https://cpnskarieridn.vercel.app" target="_blank" rel="noopener" class="btn btn-white" id="hero-cta-primary">
+        <a href="#" data-app-link class="btn btn-white" id="hero-cta-primary">
           🚀 Cek Formasi Sekarang
         </a>
         <a href="#how-it-works" class="btn btn-ghost" id="hero-cta-secondary">
@@ -1406,12 +1406,11 @@
       </div>
 
       <!-- Mock Search Bar -->
-      <div class="hero-search" onclick="window.open('https://cpnskarieridn.vercel.app','_blank')" style="cursor:pointer;"
+      <div class="hero-search" data-app-link style="cursor:pointer;"
         title="Klik untuk mulai pencarian">
         <span class="hero-search-icon">🔍</span>
         <input type="text" placeholder="e.g. S-1 Teknologi Informasi" readonly style="cursor:pointer;" />
-        <button class="hero-search-btn"
-          onclick="event.stopPropagation(); window.open('https://cpnskarieridn.vercel.app','_blank');">Cari
+        <button class="hero-search-btn" data-app-link>Cari
           Formasi</button>
       </div>
 
@@ -1611,7 +1610,7 @@
                 Akses seumur hidup (tidak perlu langganan)
               </li>
             </ul>
-            <button class="pricing-btn" id="pricing-cta-btn" onclick="window.open('https://cpnskarieridn.vercel.app','_blank')">
+            <button class="pricing-btn" id="pricing-cta-btn" data-app-link>
               💳 Beli Sekarang — Rp 39.000
             </button>
             <p class="pricing-note">Sekali bayar · Tidak ada biaya tersembunyi · Akses langsung setelah pembayaran</p>
@@ -1678,7 +1677,7 @@
       <p class="cta-subtitle">Ribuan formasi sudah menunggumu. Mulai pencarian sekarang dan temukan instansi yang
         membuka lowongan untuk jurusanmu.</p>
       <div class="cta-actions">
-        <a href="https://cpnskarieridn.vercel.app" target="_blank" rel="noopener" class="btn btn-white" id="banner-cta-primary">
+        <a href="#" data-app-link class="btn btn-white" id="banner-cta-primary">
           🚀 Mulai Sekarang — Rp 39.000
         </a>
         <a href="#features" class="btn btn-ghost" id="banner-cta-secondary">
@@ -1738,8 +1737,19 @@
 
   <!-- ====================== SCRIPTS ====================== -->
   <script>
-    // ===== APP URL — ganti jika domain berubah =====
+    // ===== SATU TEMPAT UNTUK MENGUBAH URL LOGIN APP =====
+    // Jika domain berubah (misal ke cpnskarier.id), cukup edit baris ini:
     const APP_URL = 'https://cpnskarieridn.vercel.app';
+
+    // ===== Wire semua elemen [data-app-link] ke APP_URL =====
+    document.querySelectorAll('[data-app-link]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(APP_URL, '_blank', 'noopener,noreferrer');
+      });
+      el.style.cursor = 'pointer';
+    });
 
     // Navbar scroll effect
     const navbar = document.getElementById('navbar');
@@ -1754,12 +1764,6 @@
       mobileMenu.classList.toggle('open');
     });
     function closeMobileMenu() { mobileMenu.classList.remove('open'); }
-
-    // ===== GLOBAL: buka app di tab baru =====
-    function goToApp(e) {
-      if (e) e.preventDefault();
-      window.open(APP_URL, '_blank', 'noopener,noreferrer');
-    }
 
     // FAQ accordion
     function toggleFAQ(id) {
@@ -1781,7 +1785,7 @@
     }, { threshold: 0.12 });
     revealEls.forEach(el => revealObserver.observe(el));
 
-    // Smooth hero search interaction (rotate placeholder)
+    // Rotate hero search placeholder
     const heroInput = document.querySelector('.hero-search input');
     const demoTexts = [
       'S-1 Teknologi Informasi',
@@ -1793,20 +1797,9 @@
       'S-1 Psikologi'
     ];
     let demoIdx = 0;
-    function rotatePlaceholder() {
-      heroInput.placeholder = demoTexts[demoIdx % demoTexts.length];
-      demoIdx++;
-    }
-    setInterval(rotatePlaceholder, 2800);
-
-    // ===== UTM tracking helper (optional) =====
-    // Menambahkan utm_source agar bisa tracking dari mana user masuk
-    document.querySelectorAll('a[href^="https://cpnskarieridn.vercel.app"]').forEach(link => {
-      const url = new URL(link.href);
-      url.searchParams.set('utm_source', 'landing');
-      url.searchParams.set('utm_medium', link.dataset.utmMedium || 'cta');
-      link.href = url.toString();
-    });
+    setInterval(() => {
+      heroInput.placeholder = demoTexts[demoIdx++ % demoTexts.length];
+    }, 2800);
   </script>
 </body>
 
