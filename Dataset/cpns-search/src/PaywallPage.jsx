@@ -19,7 +19,7 @@ export default function PaywallPage({ onUpgrade, user }) {
             Cek Referensi Formasi<br /><span style={{ color: '#FCD34D' }}>CPNS Lulusan Kamu</span>
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13, fontWeight: 500, margin: 0, lineHeight: 1.6 }}>
-            Akses penuh ke <strong style={{ color: 'white' }}>semua formasi</strong> CPFNS 2024
+            Akses penuh ke <strong style={{ color: 'white' }}>semua formasi</strong> CPNS 2024
           </p>
         </div>
       </div>
@@ -72,7 +72,7 @@ export default function PaywallPage({ onUpgrade, user }) {
               Hasil Pencarian Terkunci
             </h2>
             <p style={{ fontSize: 13, color: '#64748b', margin: '0 0 24px', lineHeight: 1.7 }}>
-              Upgrade ke Premium untuk melihat seluruh hasil pencarian dan mengunduh dokumen formasi CPFNS 2024.
+              Upgrade ke Premium untuk melihat seluruh hasil pencarian dan mengunduh dokumen formasi CPNS 2024.
             </p>
 
             <button
@@ -116,7 +116,7 @@ export default function PaywallPage({ onUpgrade, user }) {
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         boxShadow: '0 -4px 20px rgba(0,0,0,0.06)'
       }}>
-        <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>© CPUsKarier</span>
+        <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>© CPNSKarier</span>
       </div>
     </div>
   );
