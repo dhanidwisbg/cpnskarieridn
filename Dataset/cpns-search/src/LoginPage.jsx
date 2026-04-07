@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react';
-import logoImg from './assets/logo.png';
+import logoImg from './assets/logo-transparan.png';
 import { supabase } from './supabase';
 
 export default function LoginPage({ onLogin, onRegister }) {
