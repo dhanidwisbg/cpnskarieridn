@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CPNSkarier — Temukan Formasi CPNS untuk Jurusanmu</title>
+  <meta name="description"
+    content="Cari formasi CPNS 2024 berdasarkan jurusan kuliah kamu. Data dari 5.000+ formasi instansi pusat & daerah. Akses penuh hanya Rp 39.000 — sekali bayar, seumur hidup." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ====================== RESET & BASE ====================== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ====================== DESIGN TOKENS ====================== */
+    :root {
+      --blue-dark: #0050CC;
+      --blue: #007FFF;
+      --blue-light: #00B4FF;
+      --blue-pale: #eff6ff;
+      --blue-ring: rgba(0, 127, 255, 0.25);
+      --yellow: #FCD34D;
+      --yellow-dark: #F59E0B;
+      --slate-900: #0f172a;
+      --slate-700: #334155;
+      --slate-500: #64748b;
+      --slate-300: #cbd5e1;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+      --grad-hero: linear-gradient(135deg, #0050CC 0%, #007FFF 55%, #00B4FF 100%);
+      --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.07);
+      --shadow-blue: 0 8px 28px rgba(0, 127, 255, 0.3);
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --radius-full: 9999px;
+    }
+
+    /* ====================== UTILITY ====================== */
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 14px 28px;
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      background: var(--grad-hero);
+      color: var(--white);
+      box-shadow: var(--shadow-blue);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 12px 36px rgba(0, 127, 255, 0.45);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--white);
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-white {
+      background: var(--white);
+      color: var(--blue);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn-white:hover {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+    }
+
+    /* ====================== NAVBAR ====================== */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 0 24px;
+      transition: background 0.3s, box-shadow 0.3s, backdrop-filter 0.3s;
+    }
+
+    #navbar.scrolled {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .nav-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+      transition: color 0.3s;
+    }
+
+    #navbar.scrolled .nav-logo {
+      color: var(--slate-900);
+    }
+
+    .nav-logo-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--grad-hero);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 127, 255, 0.4);
+    }
+
+    .nav-logo-badge img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    #navbar.scrolled .nav-logo-badge {
+      box-shadow: 0 4px 12px rgba(0, 127, 255, 0.25);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-weight: 700;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    #navbar.scrolled .nav-links a {
+      color: var(--slate-500);
+    }
+
+    #navbar.scrolled .nav-links a:hover {
+      color: var(--blue);
+    }
+
+    .nav-cta {
+      font-size: 13px;
+      padding: 10px 20px;
+      background: var(--white);
+      color: var(--blue);
+      border-radius: var(--radius-md);
+      font-weight: 800;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    #navbar.scrolled .nav-cta {
+      background: var(--grad-hero);
+      color: var(--white);
+      box-shadow: var(--shadow-blue);
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .nav-hamburger span {
+      width: 22px;
+      height: 2px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+
+    #navbar.scrolled .nav-hamburger span {
+      background: var(--slate-700);
+    }
+
+    .app-link {
+      cursor: pointer;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 68px;
+      left: 0;
+      right: 0;
+      background: var(--white);
+      border-bottom: 1px solid var(--slate-100);
+      padding: 20px 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      flex-direction: column;
+      gap: 16px;
+      z-index: 99;
+    }
+
+    .mobile-menu.open {
+      display: flex;
+    }
+
+    .mobile-menu a {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--slate-700);
+      text-decoration: none;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--slate-100);
+    }
+
+    .mobile-menu a:last-child {
+      border-bottom: none;
+    }
+
+    /* ====================== HERO ====================== */
+    #hero {
+      background: var(--grad-hero);
+      padding: 160px 24px 120px;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-blob-1 {
+      top: -80px;
+      right: -80px;
+      width: 320px;
+      height: 320px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .hero-blob-2 {
+      bottom: -100px;
+      left: -60px;
+      width: 400px;
+      height: 400px;
+      background: rgba(0, 180, 255, 0.12);
+    }
+
+    .hero-blob-3 {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0, 80, 204, 0.3) 0%, transparent 70%);
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: var(--radius-full);
+      padding: 6px 16px;
+      margin-bottom: 28px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      animation: fadeInDown 0.6s ease;
+    }
+
+    .hero-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--yellow);
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.6;
+        transform: scale(1.4);
+      }
+    }
+
+    .hero-title {
+      font-size: clamp(36px, 6vw, 60px);
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      animation: fadeInDown 0.7s ease 0.1s both;
+    }
+
+    .hero-title .accent {
+      color: var(--yellow);
+    }
+
+    .hero-subtitle {
+      font-size: clamp(15px, 2vw, 18px);
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.82);
+      line-height: 1.7;
+      margin-bottom: 40px;
+      animation: fadeInDown 0.7s ease 0.2s both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      animation: fadeInDown 0.7s ease 0.3s both;
+    }
+
+    .hero-search {
+      max-width: 540px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      animation: fadeInUp 0.7s ease 0.4s both;
+    }
+
+    .hero-search-icon {
+      color: var(--blue);
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .hero-search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--slate-500);
+      font-family: inherit;
+      background: transparent;
+    }
+
+    .hero-search-btn {
+      background: var(--grad-hero);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 18px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0, 127, 255, 0.4);
+      transition: transform 0.2s;
+    }
+
+    .hero-search-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 40px;
+      animation: fadeInUp 0.7s ease 0.5s both;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-num {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: -1px;
+    }
+
+    .hero-stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.65);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 2px;
+    }
+
+    .hero-stat-divider {
+      width: 1px;
+      background: rgba(255, 255, 255, 0.2);
+      align-self: stretch;
+    }
+
+    /* ====================== SOCIAL PROOF BAR ====================== */
+    #social-proof {
+      background: var(--white);
+      border-bottom: 1px solid var(--slate-100);
+      padding: 20px 24px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .proof-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px 28px;
+      flex-wrap: wrap;
+    }
+
+    .proof-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--slate-700);
+    }
+
+    .proof-icon {
+      font-size: 16px;
+    }
+
+    .proof-divider {
+      color: var(--slate-300);
+      font-size: 18px;
+    }
+
+    /* ====================== SECTION SHARED ====================== */
+    section {
+      padding: 100px 24px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--blue);
+      background: var(--blue-pale);
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--slate-900);
+      margin-bottom: 14px;
+    }
+
+    .section-subtitle {
+      font-size: 16px;
+      color: var(--slate-500);
+      font-weight: 500;
+      line-height: 1.7;
+      max-width: 560px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .section-header .section-subtitle {
+      margin: 0 auto;
+    }
+
+    /* ====================== FEATURES ====================== */
+    #features {
+      background: var(--white);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--slate-50);
+      border-radius: var(--radius-xl);
+      padding: 36px 32px;
+      border: 1px solid var(--slate-100);
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      background: linear-gradient(135deg, var(--blue-pale) 0%, transparent 60%);
+      transition: opacity 0.3s;
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 48px rgba(0, 127, 255, 0.1);
+      border-color: #bfdbfe;
+    }
+
+    .feature-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-icon-wrap.blue {
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    }
+
+    .feature-icon-wrap.purple {
+      background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+    }
+
+    .feature-icon-wrap.green {
+      background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+    }
+
+    .feature-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: var(--slate-500);
+      line-height: 1.75;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ====================== HOW IT WORKS ====================== */
+    #how-it-works {
+      background: var(--slate-50);
+    }
+
+    .steps-container {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 32px;
+    }
+
+    .step-card {
+      text-align: center;
+      position: relative;
+      animation: fadeInUp 0.6s ease both;
+    }
+
+    .step-num-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 28px;
+    }
+
+    .step-num {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--grad-hero);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: 900;
+      margin: 0 auto;
+      box-shadow: 0 8px 24px rgba(0, 127, 255, 0.38);
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-ring {
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      border: 2px dashed rgba(0, 127, 255, 0.25);
+      animation: spin 12s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: translateX(-50%) rotate(360deg);
+      }
+    }
+
+    .step-connector {
+      display: none;
+      position: absolute;
+      top: 36px;
+      left: calc(50% + 36px);
+      width: calc(100% - 72px);
+      height: 2px;
+      background: linear-gradient(90deg, #bfdbfe, transparent);
+    }
+
+    @media (min-width: 768px) {
+      .step-connector {
+        display: block;
+      }
+    }
+
+    .step-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 10px;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      color: var(--slate-500);
+      line-height: 1.75;
+      max-width: 260px;
+      margin: 0 auto;
+    }
+
+    /* ====================== PRICING ====================== */
+    #harga {
+      background: var(--white);
+    }
+
+    .pricing-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+
+    .pricing-card {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      border: 2px solid var(--blue);
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 24px 64px rgba(0, 127, 255, 0.14);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .pricing-header {
+      background: var(--grad-hero);
+      padding: 36px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: var(--white);
+      border-radius: 40px 40px 0 0;
+    }
+
+    .pricing-crown {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--yellow), var(--yellow-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 32px;
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+    }
+
+    .pricing-plan {
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.75);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .pricing-price {
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: -1.5px;
+    }
+
+    .pricing-price span {
+      font-size: 16px;
+      letter-spacing: 0;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .pricing-body {
+      padding: 40px 40px 36px;
+    }
+
+    .pricing-benefits {
+      list-style: none;
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .pricing-benefit {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--slate-700);
+      line-height: 1.5;
+    }
+
+    .benefit-check {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: -1px;
+    }
+
+    .pricing-btn {
+      width: 100%;
+      padding: 17px;
+      background: var(--grad-hero);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 800;
+      font-family: inherit;
+      box-shadow: var(--shadow-blue);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .pricing-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px rgba(0, 127, 255, 0.42);
+    }
+
+    .pricing-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--slate-300);
+      font-weight: 600;
+      margin-top: 16px;
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+      background: var(--yellow);
+      color: var(--slate-900);
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ====================== FAQ ====================== */
+    #faq {
+      background: var(--slate-50);
+    }
+
+    .faq-list {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .faq-item {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-100);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .faq-item.open {
+      border-color: #bfdbfe;
+      box-shadow: 0 4px 20px rgba(0, 127, 255, 0.1);
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 24px;
+      font-family: inherit;
+      text-align: left;
+    }
+
+    .faq-q-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    .faq-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--slate-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+      transition: background 0.2s, transform 0.3s;
+      color: var(--slate-500);
+      font-weight: 300;
+      line-height: 1;
+    }
+
+    .faq-item.open .faq-icon {
+      background: var(--blue-pale);
+      color: var(--blue);
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.25s ease;
+      font-size: 14px;
+      color: var(--slate-500);
+      line-height: 1.8;
+      font-weight: 500;
+      padding: 0 24px;
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 200px;
+      padding: 0 24px 22px;
+    }
+
+    /* ====================== CTA BANNER ====================== */
+    #cta-banner {
+      background: var(--grad-hero);
+      padding: 100px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-blob-1 {
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 280px;
+      height: 280px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 50%;
+    }
+
+    .cta-blob-2 {
+      position: absolute;
+      bottom: -80px;
+      left: -80px;
+      width: 360px;
+      height: 360px;
+      background: rgba(0, 180, 255, 0.1);
+      border-radius: 50%;
+    }
+
+    .cta-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .cta-emoji {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .cta-title {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .cta-subtitle {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    .cta-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .cta-guarantee {
+      margin-top: 24px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 600;
+    }
+
+    /* ====================== FOOTER ====================== */
+    footer {
+      background: var(--slate-900);
+      color: rgba(255, 255, 255, 0.65);
+      padding: 56px 24px 32px;
+    }
+
+    .footer-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand {
+      max-width: 300px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 14px;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .footer-logo-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--grad-hero);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .footer-logo-badge img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .footer-desc {
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .footer-links-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--white);
+    }
+
+    .footer-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin-bottom: 28px;
+    }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .footer-made {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .footer-made span {
+      color: #ef4444;
+    }
+
+    /* ====================== SCROLL ANIMATIONS ====================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 {
+      transition-delay: 0.1s;
+    }
+
+    .reveal-delay-2 {
+      transition-delay: 0.2s;
+    }
+
+    .reveal-delay-3 {
+      transition-delay: 0.3s;
+    }
+
+    /* ====================== KEYFRAMES ====================== */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ====================== FLOATING CARDS (hero decoration) ====================== */
+    .hero-floating-cards {
+      pointer-events: none;
+      position: relative;
+      max-width: 680px;
+      margin: 48px auto 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      animation: fadeInUp 0.7s ease 0.6s both;
+    }
+
+    .float-card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .float-card-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .float-card-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.4;
+    }
+
+    .float-card-text small {
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.65);
+      display: block;
+      font-size: 11px;
+    }
+
+    .float-card-badge {
+      font-size: 10px;
+      font-weight: 900;
+      background: rgba(252, 211, 77, 0.25);
+      color: var(--yellow);
+      border-radius: 6px;
+      padding: 2px 7px;
+      margin-top: 4px;
+      display: inline-block;
+    }
+
+    /* ====================== RESPONSIVE ====================== */
+    @media (max-width: 768px) {
+
+      .nav-links,
+      .nav-cta-wrap {
+        display: none;
+      }
+
+      .nav-hamburger {
+        display: flex;
+      }
+
+      #hero {
+        padding: 120px 20px 80px;
+      }
+
+      .hero-stats {
+        gap: 20px;
+      }
+
+      .hero-stat-divider {
+        display: none;
+      }
+
+      .hero-floating-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .steps-container {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-body {
+        padding: 32px 24px 28px;
+      }
+
+      section {
+        padding: 72px 20px;
+      }
+
+      .footer-top {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ====================== NAVBAR ====================== -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <div class="nav-logo-badge">
+          <img src="logo.png" alt="CPNSkarier Logo" />
+        </div>
+        CPNSkarier
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Fitur</a></li>
+        <li><a href="#harga">Harga</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <div class="nav-cta-wrap">
+        <a id="nav-cta-btn" href="https://cpnskarier.id" target="_blank" rel="noopener" class="btn nav-cta">Mulai
+          Sekarang</a>
+      </div>
+      <button class="nav-hamburger" id="hamburgerBtn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#features" onclick="closeMobileMenu()">Fitur</a>
+    <a href="#harga" onclick="closeMobileMenu()">Harga</a>
+    <a href="#faq" onclick="closeMobileMenu()">FAQ</a>
+    <a href="https://cpnskarier.id" target="_blank" rel="noopener" onclick="closeMobileMenu()"
+      style="color: var(--blue); border-bottom: none; background: var(--blue-pale); padding: 12px 16px; border-radius: 10px; text-align: center;">Mulai
+      Sekarang →</a>
+  </div>
+
+  <!-- ====================== HERO ====================== -->
+  <section id="hero">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="hero-blob hero-blob-3"></div>
+
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        CPNS 2024 — Data Formasi Resmi
+      </div>
+
+      <h1 class="hero-title">
+        Temukan Formasi CPNS<br />
+        yang Cocok untuk <span class="accent">Jurusanmu</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Cari dari ribuan formasi instansi pusat &amp; daerah berdasarkan jurusan kuliah kamu —
+        cepat, akurat, dan langsung ke dokumen resminya.
+      </p>
+
+      <div class="hero-actions">
+        <a href="https://cpnskarier.id" target="_blank" rel="noopener" class="btn btn-white" id="hero-cta-primary">
+          🚀 Cek Formasi Sekarang
+        </a>
+        <a href="#how-it-works" class="btn btn-ghost" id="hero-cta-secondary">
+          Lihat Cara Kerja →
+        </a>
+      </div>
+
+      <!-- Mock Search Bar -->
+      <div class="hero-search" onclick="window.open('https://cpnskarier.id','_blank')" style="cursor:pointer;"
+        title="Klik untuk mulai pencarian">
+        <span class="hero-search-icon">🔍</span>
+        <input type="text" placeholder="e.g. S-1 Teknologi Informasi" readonly style="cursor:pointer;" />
+        <button class="hero-search-btn"
+          onclick="event.stopPropagation(); window.open('https://cpnskarier.id','_blank');">Cari
+          Formasi</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">5.000+</div>
+          <div class="hero-stat-label">Total Formasi</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">700+</div>
+          <div class="hero-stat-label">Instansi</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">Rp 39rb</div>
+          <div class="hero-stat-label">Akses Seumur Hidup</div>
+        </div>
+      </div>
+
+      <!-- Floating Cards -->
+      <div class="hero-floating-cards">
+        <div class="float-card">
+          <span class="float-card-icon">🏛️</span>
+          <div class="float-card-text">
+            Kementerian Keuangan
+            <small>S-1 Akuntansi</small>
+            <span class="float-card-badge">✓ Ada Formasi</span>
+          </div>
+        </div>
+        <div class="float-card">
+          <span class="float-card-icon">⚖️</span>
+          <div class="float-card-text">
+            Mahkamah Agung
+            <small>S-1 Ilmu Hukum</small>
+            <span class="float-card-badge">✓ Ada Formasi</span>
+          </div>
+        </div>
+        <div class="float-card">
+          <span class="float-card-icon">💻</span>
+          <div class="float-card-text">
+            BSSN
+            <small>S-1 Teknik Informatika</small>
+            <span class="float-card-badge">✓ Ada Formasi</span>
+          </div>
+        </div>
+        <div class="float-card">
+          <span class="float-card-icon">🏥</span>
+          <div class="float-card-text">
+            Kemenkes RI
+            <small>S-1 Kesehatan Masyarakat</small>
+            <span class="float-card-badge">✓ Ada Formasi</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== SOCIAL PROOF BAR ====================== -->
+  <div id="social-proof">
+    <div class="proof-inner">
+      <div class="proof-item">
+        <span class="proof-icon">📊</span>
+        <span>Data dari <strong>5.000+ formasi</strong></span>
+      </div>
+      <span class="proof-divider">·</span>
+      <div class="proof-item">
+        <span class="proof-icon">🏛️</span>
+        <span>Instansi Pusat &amp; Daerah</span>
+      </div>
+      <span class="proof-divider">·</span>
+      <div class="proof-item">
+        <span class="proof-icon">✅</span>
+        <span>CPNS 2024 Resmi</span>
+      </div>
+      <span class="proof-divider">·</span>
+      <div class="proof-item">
+        <span class="proof-icon">🔒</span>
+        <span>Pembayaran Aman via Midtrans</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== FEATURES ====================== -->
+  <section id="features">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag reveal">Fitur Unggulan</div>
+        <h2 class="section-title reveal reveal-delay-1">Semua yang Kamu Butuhkan<br />untuk Daftar CPNS</h2>
+        <p class="section-subtitle reveal reveal-delay-2">Dirancang khusus untuk membantu lulusan Indonesia menemukan
+          formasi yang tepat sesuai jurusan dengan cepat dan mudah.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap blue">🔍</div>
+          <h3 class="feature-title">Pencarian Cerdas</h3>
+          <p class="feature-desc">Cari formasi berdasarkan jurusan, instansi, atau jenjang pendidikan dalam hitungan
+            detik. Didukung fuzzy search agar tetap menemukan hasil walau ada typo.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon-wrap purple">📄</div>
+          <h3 class="feature-title">Akses Dokumen Resmi</h3>
+          <p class="feature-desc">Buka langsung file PDF pengumuman formasi dari setiap instansi yang membuka lowongan.
+            Tidak perlu cari manual di website masing-masing instansi.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon-wrap green">🎯</div>
+          <h3 class="feature-title">Filter Pintar</h3>
+          <p class="feature-desc">Filter berdasarkan kategori instansi (Pusat/Daerah), jenjang pendidikan (S1, S2, D3,
+            dll), dan nama instansi spesifik untuk hasil yang lebih terarah.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== HOW IT WORKS ====================== -->
+  <section id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag reveal">Cara Kerja</div>
+        <h2 class="section-title reveal reveal-delay-1">Cara Kerja<br />CPNSkarier</h2>
+        <p class="section-subtitle reveal reveal-delay-2">Tiga langkah mudah untuk menemukan semua formasi CPNS yang
+          relevan dengan latar belakang pendidikanmu.</p>
+      </div>
+      <div class="steps-container">
+        <div class="step-card reveal">
+          <div class="step-num-wrap">
+            <div class="step-ring"></div>
+            <div class="step-num">1</div>
+          </div>
+          <div class="step-connector"></div>
+          <h3 class="step-title">Daftar &amp; Login</h3>
+          <p class="step-desc">Buat akun gratis dalam 30 detik. Cukup email dan password — tidak butuh data tambahan.
+          </p>
+        </div>
+        <div class="step-card reveal reveal-delay-1">
+          <div class="step-num-wrap">
+            <div class="step-ring" style="animation-direction:reverse"></div>
+            <div class="step-num">2</div>
+          </div>
+          <div class="step-connector"></div>
+          <h3 class="step-title">Cari Formasi</h3>
+          <p class="step-desc">Ketik jurusan kamu dan lihat semua instansi yang membuka formasi untukmu — filter sesuai
+            kebutuhan.</p>
+        </div>
+        <div class="step-card reveal reveal-delay-2">
+          <div class="step-num-wrap">
+            <div class="step-ring"></div>
+            <div class="step-num">3</div>
+          </div>
+          <h3 class="step-title">Buka Dokumen</h3>
+          <p class="step-desc">Klik kartu formasi dan langsung buka dokumen PDF resmi instansi tersebut. Cek persyaratan
+            dan langsung daftar!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== PRICING ====================== -->
+  <section id="harga">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag reveal">Harga</div>
+        <h2 class="section-title reveal reveal-delay-1">Satu Harga,<br />Akses Seumur Hidup</h2>
+        <p class="section-subtitle reveal reveal-delay-2">Investasi terkecil untuk persiapan karier terbaik. Tidak ada
+          biaya bulanan, tidak ada kejutan.</p>
+      </div>
+      <div class="pricing-wrapper reveal">
+        <div class="pricing-card">
+          <div class="pricing-badge">🔥 Terpopuler</div>
+          <div class="pricing-header">
+            <div class="pricing-crown">👑</div>
+            <div class="pricing-plan">Premium</div>
+            <div class="pricing-price">Rp 39.000 <span>/ seumur hidup</span></div>
+          </div>
+          <div class="pricing-body">
+            <ul class="pricing-benefits">
+              <li class="pricing-benefit">
+                <span class="benefit-check">✅</span>
+                Akses penuh ke semua formasi CPNS 2024
+              </li>
+              <li class="pricing-benefit">
+                <span class="benefit-check">✅</span>
+                Download dokumen PDF tanpa batasan
+              </li>
+              <li class="pricing-benefit">
+                <span class="benefit-check">✅</span>
+                Filter by instansi, kategori, dan jurusan
+              </li>
+              <li class="pricing-benefit">
+                <span class="benefit-check">✅</span>
+                Data diperbarui secara berkala
+              </li>
+              <li class="pricing-benefit">
+                <span class="benefit-check">✅</span>
+                Akses seumur hidup (tidak perlu langganan)
+              </li>
+            </ul>
+            <button class="pricing-btn" id="pricing-cta-btn" onclick="window.open('https://cpnskarier.id','_blank')">
+              💳 Beli Sekarang — Rp 39.000
+            </button>
+            <p class="pricing-note">Sekali bayar · Tidak ada biaya tersembunyi · Akses langsung setelah pembayaran</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== FAQ ====================== -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag reveal">FAQ</div>
+        <h2 class="section-title reveal reveal-delay-1">Pertanyaan yang<br />Sering Ditanyakan</h2>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item reveal" id="faq1">
+          <button class="faq-question" onclick="toggleFAQ('faq1')">
+            <span class="faq-q-text">Apakah data formasi yang tersedia resmi?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">Ya, semua data bersumber dari dokumen PDF resmi CPNS 2024 yang diterbitkan oleh
+            masing-masing instansi pemerintah. Kami mengompilasi data ini agar mudah kamu akses dalam satu platform.
+          </div>
+        </div>
+        <div class="faq-item reveal reveal-delay-1" id="faq2">
+          <button class="faq-question" onclick="toggleFAQ('faq2')">
+            <span class="faq-q-text">Apakah akses berlaku seumur hidup?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">Ya, cukup bayar sekali dan akses tidak akan kedaluwarsa. Tidak ada biaya langganan
+            bulanan atau tahunan. Bayar satu kali, nikmati selamanya.</div>
+        </div>
+        <div class="faq-item reveal reveal-delay-2" id="faq3">
+          <button class="faq-question" onclick="toggleFAQ('faq3')">
+            <span class="faq-q-text">Metode pembayaran apa yang tersedia?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">Pembayaran menggunakan Midtrans — mendukung transfer bank (BCA, BNI, BRI, Mandiri),
+            QRIS, e-wallet (GoPay, OVO, Dana, ShopeePay), dan kartu kredit/debit. Semua metode populer di Indonesia
+            tersedia.</div>
+        </div>
+        <div class="faq-item reveal reveal-delay-3" id="faq4">
+          <button class="faq-question" onclick="toggleFAQ('faq4')">
+            <span class="faq-q-text">Apakah ada versi gratis?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">Kamu bisa mendaftar gratis dan melihat halaman aplikasi, namun hasil pencarian formasi
+            CPNS memerlukan akses Premium. Dengan hanya Rp 39.000, kamu sudah bisa mengakses seluruh database formasi
+            secara penuh.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== CTA BANNER ====================== -->
+  <section id="cta-banner">
+    <div class="cta-blob-1"></div>
+    <div class="cta-blob-2"></div>
+    <div class="cta-inner">
+      <span class="cta-emoji">🎯</span>
+      <h2 class="cta-title">Jangan sampai ketinggalan formasi CPNS yang cocok untukmu</h2>
+      <p class="cta-subtitle">Ribuan formasi sudah menunggumu. Mulai pencarian sekarang dan temukan instansi yang
+        membuka lowongan untuk jurusanmu.</p>
+      <div class="cta-actions">
+        <a href="https://cpnskarier.id" target="_blank" rel="noopener" class="btn btn-white" id="banner-cta-primary">
+          🚀 Mulai Sekarang — Rp 39.000
+        </a>
+        <a href="#features" class="btn btn-ghost" id="banner-cta-secondary">
+          Pelajari Fitur →
+        </a>
+      </div>
+      <p class="cta-guarantee">🔒 Sekali bayar · Akses seumur hidup · Pembayaran aman via Midtrans</p>
+    </div>
+  </section>
+
+  <!-- ====================== FOOTER ====================== -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="#" class="footer-logo">
+            <div class="footer-logo-badge">
+              <img src="logo.png" alt="CPNSkarier Logo" />
+            </div>
+            CPNSkarier
+          </a>
+          <p class="footer-desc">Platform pencarian formasi CPNS 2024 terlengkap. Temukan instansi yang membuka lowongan
+            untuk jurusanmu dalam hitungan detik.</p>
+        </div>
+        <div>
+          <div class="footer-links-title">Navigasi</div>
+          <ul class="footer-links">
+            <li><a href="#features">Fitur</a></li>
+            <li><a href="#how-it-works">Cara Kerja</a></li>
+            <li><a href="#harga">Harga</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-links-title">Legal</div>
+          <ul class="footer-links">
+            <li><a href="https://cpnskarier.id" target="_blank" rel="noopener">Syarat &amp; Ketentuan</a>
+            </li>
+            <li><a href="https://cpnskarier.id" target="_blank" rel="noopener">Kebijakan Privasi</a></li>
+            <li><a href="mailto:cpnskarierindonesia@gmail.com">Kontak</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-links-title">Hubungi Kami</div>
+          <ul class="footer-links">
+            <li><a href="mailto:dhanidwisbg@gmail.com">dhanidwisbg@gmail.com</a></li>
+            <li><a href="https://cpnskarier.id" target="_blank" rel="noopener">Buka Aplikasi →</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-divider"></div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2026 CPNSkarier. Semua hak dilindungi.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ====================== SCRIPTS ====================== -->
+  <script>
+    // ===== APP URL — ganti jika domain berubah =====
+    const APP_URL = 'https://cpnskarier.id';
+
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Mobile menu
+    const hamburger = document.getElementById('hamburgerBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+    function closeMobileMenu() { mobileMenu.classList.remove('open'); }
+
+    // ===== GLOBAL: buka app di tab baru =====
+    function goToApp(e) {
+      if (e) e.preventDefault();
+      window.open(APP_URL, '_blank', 'noopener,noreferrer');
+    }
+
+    // FAQ accordion
+    function toggleFAQ(id) {
+      const item = document.getElementById(id);
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+
+    // Scroll reveal animation
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => revealObserver.observe(el));
+
+    // Smooth hero search interaction (rotate placeholder)
+    const heroInput = document.querySelector('.hero-search input');
+    const demoTexts = [
+      'S-1 Teknologi Informasi',
+      'S-1 Akuntansi',
+      'S-1 Ilmu Hukum',
+      'D-3 Teknik Sipil',
+      'S-2 Manajemen',
+      'S-1 Teknik Elektro',
+      'S-1 Psikologi'
+    ];
+    let demoIdx = 0;
+    function rotatePlaceholder() {
+      heroInput.placeholder = demoTexts[demoIdx % demoTexts.length];
+      demoIdx++;
+    }
+    setInterval(rotatePlaceholder, 2800);
+
+    // ===== UTM tracking helper (optional) =====
+    // Menambahkan utm_source agar bisa tracking dari mana user masuk
+    document.querySelectorAll('a[href^="https://cpnskarier.id"]').forEach(link => {
+      const url = new URL(link.href);
+      url.searchParams.set('utm_source', 'landing');
+      url.searchParams.set('utm_medium', link.dataset.utmMedium || 'cta');
+      link.href = url.toString();
+    });
+  </script>
+</body>
+
+</html>
