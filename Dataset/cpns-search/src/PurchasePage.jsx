@@ -5,7 +5,7 @@ import logoImg from './assets/logo.png';
 const API_URL = '';
 
 const BENEFITS = [
-  'Akses penuh ke semua formasi CPFNS 2024',
+  'Akses penuh ke semua formasi CPNS 2024',
   'Download dokumen PDF tanpa batasan',
   'Filter by instansi, kategori, dan jurusan',
   'Data diperbarui secara berkala',
@@ -97,7 +97,7 @@ export default function PurchasePage({ user, onBack }) {
             Upgrade ke Premium
           </h1>
           <p style={{ fontSize: 13, color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-            Akses tidak terbatas ke seluruh fitur dan data formasi CPFNS
+            Akses tidak terbatas ke seluruh fitur dan data formasi CPNS
           </p>
         </div>
 

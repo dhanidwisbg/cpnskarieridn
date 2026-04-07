@@ -143,7 +143,7 @@ function App({ user, onLogout, onUpgrade }) {
               Cek Referensi Formasi<br /><span style={{ color: '#FCD34D' }}>CPNS Lulusan Kamu</span>
             </h1>
             <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13, fontWeight: 500, margin: 0, lineHeight: 1.6 }}>
-              Akses penuh ke <strong style={{ color: 'white' }}>semua formasi</strong> CPFNS 2024
+              Akses penuh ke <strong style={{ color: 'white' }}>semua formasi</strong> CPNS 2024
             </p>
           </div>
         </div>
@@ -163,17 +163,17 @@ function App({ user, onLogout, onUpgrade }) {
           <div style={{ marginTop: 32, textAlign: 'center' }}>
             <div style={{ background: 'white', borderRadius: 24, border: '1px solid #f1f5f9', padding: '32px 24px', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
               <div style={{ width: 64, height: 64, background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ea580c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ea580c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
               </div>
               <h2 style={{ fontSize: 20, fontWeight: 900, color: '#0f172a', margin: '0 0 10px' }}>Hasil Pencarian Terkunci</h2>
               <p style={{ fontSize: 13, color: '#64748b', margin: '0 0 24px', lineHeight: 1.7 }}>
-                Upgrade ke Premium untuk melihat seluruh hasil pencarian dan mengunduh dokumen formasi CPFNS 2024.
+                Upgrade ke Premium untuk melihat seluruh hasil pencarian dan mengunduh dokumen formasi CPNS 2024.
               </p>
               <button
                 onClick={onUpgrade}
                 style={{ width: '100%', padding: '15px', borderRadius: 14, background: 'linear-gradient(135deg, #0050CC, #007FFF)', color: 'white', border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 800, fontFamily: 'inherit', boxShadow: '0 6px 20px rgba(0,127,255,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s' }}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
                 Upgrade Premium — Rp 39.000
               </button>
               <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 12, fontWeight: 500 }}>Sekali bayar · Akses seumur hidup</p>
@@ -277,223 +277,223 @@ function App({ user, onLogout, onUpgrade }) {
         <div className="search-section">
           <div style={{ background: 'white', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,127,255,0.12)', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
 
-          {/* Search input */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderBottom: '1px solid #f1f5f9' }}>
-            <Search size={18} color="#007FFF" style={{ flexShrink: 0 }} />
-            <input
-              ref={searchRef}
-              type="text"
-              value={query}
-              onChange={e => { setQuery(e.target.value); setLimit(30); }}
-              placeholder="E.g. S-1 Teknologi Informasi"
-              style={{
-                flex: 1, border: 'none', outline: 'none', fontSize: 15,
-                fontWeight: 600, color: '#0f172a', background: 'transparent'
-              }}
-            />
-            {query && (
-              <button onClick={() => setQuery('')} style={{ border: 'none', background: '#f1f5f9', borderRadius: '50%', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
-                <X size={14} color="#64748b" />
-              </button>
-            )}
-          </div>
-
-          {/* Filter toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px' }}>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 6, border: 'none', background: 'none', cursor: 'pointer',
-                color: showFilters ? '#007FFF' : '#64748b', fontWeight: 700, fontSize: 13,
-                fontFamily: 'inherit', padding: 0
-              }}
-            >
-              <SlidersHorizontal size={15} />
-              Filter
-              {activeFilters > 0 && (
-                <span style={{ background: '#007FFF', color: 'white', borderRadius: '50%', width: 18, height: 18, fontSize: 10, fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {activeFilters}
-                </span>
-              )}
-            </button>
-            {(activeFilters > 0 || query) && (
-              <button onClick={clearAll} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 12, fontWeight: 700, fontFamily: 'inherit', padding: 0 }}>
-                Reset semua
-              </button>
-            )}
-          </div>
-
-          {/* Expanded filters */}
-          {showFilters && (
-            <div style={{ padding: '0 16px 16px', borderTop: '1px solid #f8fafc' }}>
-              <p style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1.5, margin: '12px 0 8px' }}>Kategori</p>
-              <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-                {['Semua', 'Pusat', 'Daerah'].map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => { setSelectedCategory(cat); setLimit(30); }}
-                    style={{
-                      padding: '8px 16px', borderRadius: 10, fontWeight: 700, fontSize: 13,
-                      cursor: 'pointer', border: 'none', fontFamily: 'inherit',
-                      background: selectedCategory === cat ? '#007FFF' : '#f1f5f9',
-                      color: selectedCategory === cat ? 'white' : '#64748b',
-                      boxShadow: selectedCategory === cat ? '0 4px 12px rgba(0,127,255,0.3)' : 'none',
-                      transition: 'all 0.2s'
-                    }}
-                  >{cat}</button>
-                ))}
-              </div>
-              <p style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1.5, margin: '12px 0 8px' }}>Pendidikan</p>
-              <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-                {['Semua', 'S1', 'S2', 'S3', 'D1', 'D3', 'D4'].map(edu => (
-                  <button
-                    key={edu}
-                    onClick={() => { setSelectedEducation(edu); setLimit(30); }}
-                    style={{
-                      padding: '8px 16px', borderRadius: 10, fontWeight: 700, fontSize: 13,
-                      cursor: 'pointer', border: 'none', fontFamily: 'inherit',
-                      background: selectedEducation === edu ? '#007FFF' : '#f1f5f9',
-                      color: selectedEducation === edu ? 'white' : '#64748b',
-                      boxShadow: selectedEducation === edu ? '0 4px 12px rgba(0,127,255,0.3)' : 'none',
-                      transition: 'all 0.2s'
-                    }}
-                  >{edu}</button>
-                ))}
-              </div>
-              <p style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1.5, margin: '0 0 8px' }}>Nama Instansi</p>
-              <div style={{ position: 'relative' }}>
-                <input
-                  list="instansi-list"
-                  value={selectedInstansi}
-                  onChange={e => { setSelectedInstansi(e.target.value); setLimit(30); }}
-                  placeholder="Semua instansi..."
-                  style={{
-                    width: '100%', padding: '10px 36px 10px 12px', borderRadius: 10, border: '2px solid',
-                    borderColor: selectedInstansi ? '#007FFF' : '#e2e8f0', outline: 'none',
-                    fontSize: 13, fontWeight: 600, color: '#0f172a', background: '#f8fafc',
-                    boxSizing: 'border-box', fontFamily: 'inherit'
-                  }}
-                />
-                {selectedInstansi && (
-                  <button onClick={() => setSelectedInstansi('')} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
-                    <X size={14} color="#94a3b8" />
-                  </button>
-                )}
-                <datalist id="instansi-list">
-                  {allUniqueInstansi.map(i => <option key={i} value={i} />)}
-                </datalist>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* RESULTS */}
-      <div className="results-section">
-
-        {/* Hasil Pencarian / Counter */}
-        {(query || activeFilters > 0) && (
-          <div style={{ marginBottom: 16, fontSize: 13, color: '#64748b', fontWeight: 600 }}>
-            Ditemukan <span style={{ color: '#0f172a', fontWeight: 800 }}>{results.length.toLocaleString()}</span> formasi
-            {query && <span> untuk "<span style={{ color: '#0f172a', fontWeight: 800 }}>{query}</span>"</span>}
-          </div>
-        )}
-
-        {/* Cards */}
-        <div className="results-grid">
-          {displayed.length > 0 ? (
-            <>
-              {displayed.map((item) => {
-                const isDaerah = item.instansi.includes('Kab.') || item.instansi.includes('Kota') || item.instansi.includes('Prov');
-                const filename = item.link_pdf.split('/').pop();
-                const driveId = driveMapping[filename] || driveMapping[decodeURIComponent(filename)];
-                const pdfHref = driveId
-                  ? `https://drive.google.com/file/d/${driveId}/view`
-                  : `https://drive.google.com/drive/folders/1CdGGrC9BAY4hp6vui16iV6TL3cvLDUfL?q=${encodeURIComponent(filename)}`;
-
-                return (
-                  <div key={item.id} className="result-card">
-                    {/* Badge row */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                      <span style={{
-                        display: 'inline-flex', alignItems: 'center', gap: 4,
-                        padding: '3px 9px', borderRadius: 999, fontSize: 10, fontWeight: 800,
-                        background: isDaerah ? '#fff7ed' : '#eff6ff',
-                        color: isDaerah ? '#ea580c' : '#2563eb'
-                      }}>
-                        {isDaerah ? <MapPin size={10} /> : <Building2 size={10} />}
-                        {isDaerah ? 'Daerah' : 'Pusat'}
-                      </span>
-                      <span style={{ fontSize: 10, color: '#cbd5e1', fontWeight: 700 }}>#{item.id}</span>
-                    </div>
-
-                    {/* Instansi */}
-                    <p style={{ fontSize: 11, fontWeight: 800, color: '#007FFF', textTransform: 'uppercase', letterSpacing: 0.8, margin: '0 0 4px', lineHeight: 1.4 }}>
-                      {item.instansi}
-                    </p>
-
-                    {/* Jurusan */}
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 12 }}>
-                      <GraduationCap size={16} color="#cbd5e1" style={{ flexShrink: 0, marginTop: 2 }} />
-                      <p style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: 0, lineHeight: 1.4 }}>
-                        {item.jurusan}
-                      </p>
-                    </div>
-
-                    {/* Button */}
-                    <a
-                      href={pdfHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                        background: '#007FFF', color: 'white', borderRadius: 12,
-                        padding: '11px 16px', fontWeight: 700, fontSize: 13,
-                        textDecoration: 'none', boxShadow: '0 4px 12px rgba(0,127,255,0.25)',
-                        transition: 'background 0.2s'
-                      }}
-                    >
-                      <FileText size={15} />
-                      Buka Dokumen PDF
-                    </a>
-                  </div>
-                );
-              })}
-
-              {/* Load more */}
-              {results.length > limit && (
-                <button
-                  onClick={() => setLimit(p => p + 50)}
-                  style={{
-                    width: '100%', padding: '18px', display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', gap: 6, background: 'white', borderRadius: 16,
-                    border: '2px dashed #bfdbfe', cursor: 'pointer', color: '#007FFF',
-                    fontFamily: 'inherit', transition: 'border-color 0.2s'
-                  }}
-                >
-                  <ChevronDown size={22} />
-                  <span style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>
-                    {Math.min(50, results.length - limit).toLocaleString()} dari {(results.length - limit).toLocaleString()} formasi berikutnya
-                  </span>
+            {/* Search input */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderBottom: '1px solid #f1f5f9' }}>
+              <Search size={18} color="#007FFF" style={{ flexShrink: 0 }} />
+              <input
+                ref={searchRef}
+                type="text"
+                value={query}
+                onChange={e => { setQuery(e.target.value); setLimit(30); }}
+                placeholder="E.g. S-1 Teknologi Informasi"
+                style={{
+                  flex: 1, border: 'none', outline: 'none', fontSize: 15,
+                  fontWeight: 600, color: '#0f172a', background: 'transparent'
+                }}
+              />
+              {query && (
+                <button onClick={() => setQuery('')} style={{ border: 'none', background: '#f1f5f9', borderRadius: '50%', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
+                  <X size={14} color="#64748b" />
                 </button>
               )}
-            </>
-          ) : (
-            <div style={{ textAlign: 'center', padding: '60px 20px', background: 'white', borderRadius: 20, border: '1px solid #f1f5f9' }}>
-              <div style={{ width: 64, height: 64, background: '#f8fafc', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                <Search size={28} color="#e2e8f0" />
-              </div>
-              <h4 style={{ fontSize: 18, fontWeight: 900, color: '#0f172a', margin: '0 0 8px' }}>Tidak Ditemukan</h4>
-              <p style={{ fontSize: 13, color: '#94a3b8', margin: '0 0 20px', lineHeight: 1.6 }}>
-                Tidak ada formasi untuk "<span style={{ color: '#007FFF', fontWeight: 700 }}>{query || selectedInstansi}</span>". Coba kata kunci lain.
-              </p>
-              <button onClick={clearAll} style={{ background: '#007FFF', color: 'white', border: 'none', borderRadius: 12, padding: '12px 24px', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 12px rgba(0,127,255,0.3)' }}>
-                Reset Pencarian
+            </div>
+
+            {/* Filter toggle */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px' }}>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6, border: 'none', background: 'none', cursor: 'pointer',
+                  color: showFilters ? '#007FFF' : '#64748b', fontWeight: 700, fontSize: 13,
+                  fontFamily: 'inherit', padding: 0
+                }}
+              >
+                <SlidersHorizontal size={15} />
+                Filter
+                {activeFilters > 0 && (
+                  <span style={{ background: '#007FFF', color: 'white', borderRadius: '50%', width: 18, height: 18, fontSize: 10, fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {activeFilters}
+                  </span>
+                )}
               </button>
+              {(activeFilters > 0 || query) && (
+                <button onClick={clearAll} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 12, fontWeight: 700, fontFamily: 'inherit', padding: 0 }}>
+                  Reset semua
+                </button>
+              )}
+            </div>
+
+            {/* Expanded filters */}
+            {showFilters && (
+              <div style={{ padding: '0 16px 16px', borderTop: '1px solid #f8fafc' }}>
+                <p style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1.5, margin: '12px 0 8px' }}>Kategori</p>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                  {['Semua', 'Pusat', 'Daerah'].map(cat => (
+                    <button
+                      key={cat}
+                      onClick={() => { setSelectedCategory(cat); setLimit(30); }}
+                      style={{
+                        padding: '8px 16px', borderRadius: 10, fontWeight: 700, fontSize: 13,
+                        cursor: 'pointer', border: 'none', fontFamily: 'inherit',
+                        background: selectedCategory === cat ? '#007FFF' : '#f1f5f9',
+                        color: selectedCategory === cat ? 'white' : '#64748b',
+                        boxShadow: selectedCategory === cat ? '0 4px 12px rgba(0,127,255,0.3)' : 'none',
+                        transition: 'all 0.2s'
+                      }}
+                    >{cat}</button>
+                  ))}
+                </div>
+                <p style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1.5, margin: '12px 0 8px' }}>Pendidikan</p>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+                  {['Semua', 'S1', 'S2', 'S3', 'D1', 'D3', 'D4'].map(edu => (
+                    <button
+                      key={edu}
+                      onClick={() => { setSelectedEducation(edu); setLimit(30); }}
+                      style={{
+                        padding: '8px 16px', borderRadius: 10, fontWeight: 700, fontSize: 13,
+                        cursor: 'pointer', border: 'none', fontFamily: 'inherit',
+                        background: selectedEducation === edu ? '#007FFF' : '#f1f5f9',
+                        color: selectedEducation === edu ? 'white' : '#64748b',
+                        boxShadow: selectedEducation === edu ? '0 4px 12px rgba(0,127,255,0.3)' : 'none',
+                        transition: 'all 0.2s'
+                      }}
+                    >{edu}</button>
+                  ))}
+                </div>
+                <p style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1.5, margin: '0 0 8px' }}>Nama Instansi</p>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    list="instansi-list"
+                    value={selectedInstansi}
+                    onChange={e => { setSelectedInstansi(e.target.value); setLimit(30); }}
+                    placeholder="Semua instansi..."
+                    style={{
+                      width: '100%', padding: '10px 36px 10px 12px', borderRadius: 10, border: '2px solid',
+                      borderColor: selectedInstansi ? '#007FFF' : '#e2e8f0', outline: 'none',
+                      fontSize: 13, fontWeight: 600, color: '#0f172a', background: '#f8fafc',
+                      boxSizing: 'border-box', fontFamily: 'inherit'
+                    }}
+                  />
+                  {selectedInstansi && (
+                    <button onClick={() => setSelectedInstansi('')} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
+                      <X size={14} color="#94a3b8" />
+                    </button>
+                  )}
+                  <datalist id="instansi-list">
+                    {allUniqueInstansi.map(i => <option key={i} value={i} />)}
+                  </datalist>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* RESULTS */}
+        <div className="results-section">
+
+          {/* Hasil Pencarian / Counter */}
+          {(query || activeFilters > 0) && (
+            <div style={{ marginBottom: 16, fontSize: 13, color: '#64748b', fontWeight: 600 }}>
+              Ditemukan <span style={{ color: '#0f172a', fontWeight: 800 }}>{results.length.toLocaleString()}</span> formasi
+              {query && <span> untuk "<span style={{ color: '#0f172a', fontWeight: 800 }}>{query}</span>"</span>}
             </div>
           )}
+
+          {/* Cards */}
+          <div className="results-grid">
+            {displayed.length > 0 ? (
+              <>
+                {displayed.map((item) => {
+                  const isDaerah = item.instansi.includes('Kab.') || item.instansi.includes('Kota') || item.instansi.includes('Prov');
+                  const filename = item.link_pdf.split('/').pop();
+                  const driveId = driveMapping[filename] || driveMapping[decodeURIComponent(filename)];
+                  const pdfHref = driveId
+                    ? `https://drive.google.com/file/d/${driveId}/view`
+                    : `https://drive.google.com/drive/folders/1CdGGrC9BAY4hp6vui16iV6TL3cvLDUfL?q=${encodeURIComponent(filename)}`;
+
+                  return (
+                    <div key={item.id} className="result-card">
+                      {/* Badge row */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 4,
+                          padding: '3px 9px', borderRadius: 999, fontSize: 10, fontWeight: 800,
+                          background: isDaerah ? '#fff7ed' : '#eff6ff',
+                          color: isDaerah ? '#ea580c' : '#2563eb'
+                        }}>
+                          {isDaerah ? <MapPin size={10} /> : <Building2 size={10} />}
+                          {isDaerah ? 'Daerah' : 'Pusat'}
+                        </span>
+                        <span style={{ fontSize: 10, color: '#cbd5e1', fontWeight: 700 }}>#{item.id}</span>
+                      </div>
+
+                      {/* Instansi */}
+                      <p style={{ fontSize: 11, fontWeight: 800, color: '#007FFF', textTransform: 'uppercase', letterSpacing: 0.8, margin: '0 0 4px', lineHeight: 1.4 }}>
+                        {item.instansi}
+                      </p>
+
+                      {/* Jurusan */}
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 12 }}>
+                        <GraduationCap size={16} color="#cbd5e1" style={{ flexShrink: 0, marginTop: 2 }} />
+                        <p style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: 0, lineHeight: 1.4 }}>
+                          {item.jurusan}
+                        </p>
+                      </div>
+
+                      {/* Button */}
+                      <a
+                        href={pdfHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                          background: '#007FFF', color: 'white', borderRadius: 12,
+                          padding: '11px 16px', fontWeight: 700, fontSize: 13,
+                          textDecoration: 'none', boxShadow: '0 4px 12px rgba(0,127,255,0.25)',
+                          transition: 'background 0.2s'
+                        }}
+                      >
+                        <FileText size={15} />
+                        Buka Dokumen PDF
+                      </a>
+                    </div>
+                  );
+                })}
+
+                {/* Load more */}
+                {results.length > limit && (
+                  <button
+                    onClick={() => setLimit(p => p + 50)}
+                    style={{
+                      width: '100%', padding: '18px', display: 'flex', flexDirection: 'column',
+                      alignItems: 'center', gap: 6, background: 'white', borderRadius: 16,
+                      border: '2px dashed #bfdbfe', cursor: 'pointer', color: '#007FFF',
+                      fontFamily: 'inherit', transition: 'border-color 0.2s'
+                    }}
+                  >
+                    <ChevronDown size={22} />
+                    <span style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>
+                      {Math.min(50, results.length - limit).toLocaleString()} dari {(results.length - limit).toLocaleString()} formasi berikutnya
+                    </span>
+                  </button>
+                )}
+              </>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '60px 20px', background: 'white', borderRadius: 20, border: '1px solid #f1f5f9' }}>
+                <div style={{ width: 64, height: 64, background: '#f8fafc', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <Search size={28} color="#e2e8f0" />
+                </div>
+                <h4 style={{ fontSize: 18, fontWeight: 900, color: '#0f172a', margin: '0 0 8px' }}>Tidak Ditemukan</h4>
+                <p style={{ fontSize: 13, color: '#94a3b8', margin: '0 0 20px', lineHeight: 1.6 }}>
+                  Tidak ada formasi untuk "<span style={{ color: '#007FFF', fontWeight: 700 }}>{query || selectedInstansi}</span>". Coba kata kunci lain.
+                </p>
+                <button onClick={clearAll} style={{ background: '#007FFF', color: 'white', border: 'none', borderRadius: 12, padding: '12px 24px', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 12px rgba(0,127,255,0.3)' }}>
+                  Reset Pencarian
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
       </div>
 
       {/* FOOTER BAR */}
