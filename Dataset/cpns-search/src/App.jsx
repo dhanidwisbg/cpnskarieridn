@@ -10,6 +10,7 @@ function App({ user, onLogout, onUpgrade }) {
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(30);
   const [selectedCategory, setSelectedCategory] = useState('Semua');
+  const [selectedEducation, setSelectedEducation] = useState('Semua');
   const [selectedInstansi, setSelectedInstansi] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -65,6 +66,15 @@ function App({ user, onLogout, onUpgrade }) {
     return Array.from(new Set(agencyData.map(d => d.instansi))).sort();
   }, []);
 
+  const educationRegex = {
+    'S1': /s[- ]?1\b/i,
+    'S2': /s[- ]?2\b/i,
+    'S3': /s[- ]?3\b/i,
+    'D1': /d[- ]?(i|1)\b/i,
+    'D3': /d[- ]?(iii|3)\b/i,
+    'D4': /d[- ]?(iv|4)\b/i
+  };
+
   const baseResults = useMemo(() => {
     let filtered = agencyData;
     if (selectedCategory !== 'Semua') {
@@ -73,11 +83,17 @@ function App({ user, onLogout, onUpgrade }) {
         return selectedCategory === 'Daerah' ? isDaerah : !isDaerah;
       });
     }
+    if (selectedEducation !== 'Semua') {
+      const regex = educationRegex[selectedEducation];
+      if (regex) {
+        filtered = filtered.filter(item => regex.test(item.jurusan));
+      }
+    }
     if (selectedInstansi.trim() !== '') {
       filtered = filtered.filter(item => item.instansi.toLowerCase() === selectedInstansi.toLowerCase());
     }
     return filtered;
-  }, [selectedCategory, selectedInstansi]);
+  }, [selectedCategory, selectedEducation, selectedInstansi]);
 
   const fuse = useMemo(() => new Fuse(baseResults, {
     keys: ['jurusan', 'instansi'],
@@ -90,11 +106,12 @@ function App({ user, onLogout, onUpgrade }) {
   }, [query, fuse, baseResults]);
 
   const displayed = useMemo(() => results.slice(0, limit), [results, limit]);
-  const activeFilters = (selectedCategory !== 'Semua' ? 1 : 0) + (selectedInstansi ? 1 : 0);
+  const activeFilters = (selectedCategory !== 'Semua' ? 1 : 0) + (selectedEducation !== 'Semua' ? 1 : 0) + (selectedInstansi ? 1 : 0);
 
   const clearAll = () => {
     setQuery('');
     setSelectedCategory('Semua');
+    setSelectedEducation('Semua');
     setSelectedInstansi('');
     setLimit(30);
     setShowFilters(false);
@@ -324,6 +341,23 @@ function App({ user, onLogout, onUpgrade }) {
                       transition: 'all 0.2s'
                     }}
                   >{cat}</button>
+                ))}
+              </div>
+              <p style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1.5, margin: '12px 0 8px' }}>Pendidikan</p>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+                {['Semua', 'S1', 'S2', 'S3', 'D1', 'D3', 'D4'].map(edu => (
+                  <button
+                    key={edu}
+                    onClick={() => { setSelectedEducation(edu); setLimit(30); }}
+                    style={{
+                      padding: '8px 16px', borderRadius: 10, fontWeight: 700, fontSize: 13,
+                      cursor: 'pointer', border: 'none', fontFamily: 'inherit',
+                      background: selectedEducation === edu ? '#007FFF' : '#f1f5f9',
+                      color: selectedEducation === edu ? 'white' : '#64748b',
+                      boxShadow: selectedEducation === edu ? '0 4px 12px rgba(0,127,255,0.3)' : 'none',
+                      transition: 'all 0.2s'
+                    }}
+                  >{edu}</button>
                 ))}
               </div>
               <p style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1.5, margin: '0 0 8px' }}>Nama Instansi</p>
