@@ -3,7 +3,7 @@ import Fuse from 'fuse.js';
 import { Search, FileText, ChevronDown, X, Building2, MapPin, Sparkles, GraduationCap, Briefcase, SlidersHorizontal, LogOut } from 'lucide-react';
 import agencyData from './data.json';
 import driveMapping from './drive_mapping.json';
-import logoImg from './assets/logo.png';
+import logoImg from './assets/logo-transparan.png';
 import { supabase } from './supabase';
 
 function App({ user, onLogout, onUpgrade }) {

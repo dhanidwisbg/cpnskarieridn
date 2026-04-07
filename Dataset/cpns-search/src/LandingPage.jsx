@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import logoImg from './assets/logo.png';
+import logoImg from './assets/logo-transparan.png';
 
 export default function LandingPage({ onLogin }) {
   const [mobileOpen, setMobileOpen] = useState(false);
