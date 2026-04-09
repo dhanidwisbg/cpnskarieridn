@@ -73,25 +73,57 @@ const normOnePart = (part) => {
   return toTitle(s);
 };
 
+// Pecah segment pada gelar yang muncul DI TENGAH string (bukan di depan)
+// Contoh: "S-1 Teknologi Informasi D-III Rekayasa" → ["S-1 Teknologi Informasi", "D-III Rekayasa"]
+const splitOnInternalDeg = (seg) => {
+  const re = /(S[-–]?\s*[123]|D[-–]?\s*(?:IV|III|II|I|[1-4]))\s/gi;
+  const splitPositions = [];
+  let match;
+  while ((match = re.exec(seg)) !== null) {
+    // Hanya split jika gelar ini BUKAN di posisi paling awal string
+    // dan didahului oleh spasi (bukan bagian dari kata lain)
+    if (match.index > 0 && seg[match.index - 1] === ' ') {
+      splitPositions.push(match.index);
+    }
+  }
+  if (splitPositions.length === 0) return [seg];
+  const parts = [];
+  let cursor = 0;
+  for (const pos of splitPositions) {
+    const chunk = seg.slice(cursor, pos).trim();
+    if (chunk && chunk.length >= 3) parts.push(chunk);
+    cursor = pos;
+  }
+  const last = seg.slice(cursor).trim();
+  if (last && last.length >= 3) parts.push(last);
+  return parts.length > 0 ? parts : [seg];
+};
+
 // Proses satu entri jurusan (mungkin ada slash): return array of normalized jurusan strings
 const processJurusan = (raw) => {
   if (!raw || !isRawValid(raw)) return [];
-  const parts = raw.split(/\s*\/\s*/).map(p => p.trim()).filter(Boolean);
-  if (parts.length === 0) return [];
 
-  // Single part
-  if (parts.length === 1) {
-    const n = normOnePart(parts[0]);
-    return n && n.length >= 5 ? [n] : [];
-  }
+  // Step 1: split by "/" separator
+  const slashParts = raw.split(/\s*\/\s*/).map(p => p.trim()).filter(Boolean);
 
-  // Multi-part: pisahkan gelar standalone vs. segment dengan konten
-  const standalone = [];  // gelar luang, misal "S-1", "D-IV"
-  const segments   = [];  // segment dengan nama jurusan
-  parts.forEach(p => {
+  // Step 2: untuk setiap segment, split lagi pada gelar internal (tanpa slash)
+  const allParts = [];
+  slashParts.forEach(p => {
+    const sub = splitOnInternalDeg(p);
+    allParts.push(...sub);
+  });
+
+  if (allParts.length === 0) return [];
+
+  // Step 3: pisahkan gelar standalone (misal "S-1", "D-IV" sendirian) vs segment konten
+  const standalone = [];
+  const segments   = [];
+  allParts.forEach(p => {
     if (EDU_ONLY_RE.test(p)) standalone.push(normalizeEdu(p));
     else segments.push(p);
   });
+
+  if (segments.length === 0) return [];
 
   const results = [];
   const usedDeg = new Set();
@@ -102,21 +134,18 @@ const processJurusan = (raw) => {
       const n = normOnePart(seg);
       if (n && n.length >= 5) results.push(n);
     } else {
-      // Tidak punya gelar di depan → ambil gelar dari trailing atau standalone
+      // Tidak punya gelar di depan → ambil dari trailing atau pool standalone
       const trail = seg.match(EDU_TRAIL_RE);
       if (trail) {
-        // Gelar di akhir segment ini sendiri
         const n = normOnePart(seg);
         if (n && n.length >= 5) results.push(n);
       } else {
-        // Ambil dari pool standalone yang belum dipakai
         const avail = standalone.find(d => !usedDeg.has(d));
         if (avail) {
           usedDeg.add(avail);
           const n = normOnePart(`${avail} ${seg}`);
           if (n && n.length >= 5) results.push(n);
         } else {
-          // Tidak ada gelar → title case biasa
           const n = normOnePart(seg);
           if (n && n.length >= 5) results.push(n);
         }
@@ -126,6 +155,7 @@ const processJurusan = (raw) => {
 
   return results;
 };
+
 
 function App({ user, onLogout, onUpgrade }) {
   const [query, setQuery] = useState('');
