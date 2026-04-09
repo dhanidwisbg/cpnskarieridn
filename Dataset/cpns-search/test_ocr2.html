@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDF OCR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
+</head>
+<body>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        async function process() {
+            try {
+                const pdf = await pdfjsLib.getDocument('cpns.pdf').promise;
+                let allText = "";
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    // HUGE scale for better OCR
+                    const viewport = page.getViewport({ scale: 4.0 });
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    // optional: fill white background
+                    ctx.fillStyle = "white";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                    
+                    // Convert to grayscale and increase contrast manually for better Tesseract performance
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imgData.data;
+                    for (let j = 0; j < data.length; j += 4) {
+                        const avg = (data[j] + data[j+1] + data[j+2]) / 3;
+                        const v = avg < 150 ? 0 : 255; // sharp threshold
+                        data[j] = data[j+1] = data[j+2] = v;
+                    }
+                    ctx.putImageData(imgData, 0, 0);
+
+                    const result = await Tesseract.recognize(
+                        canvas,
+                        'ind', // Indonesian language
+                        { logger: m => console.log(m) }
+                    );
+                    
+                    allText += "--- PAGE " + i + " ---\n" + result.data.text + "\n";
+                }
+                
+                fetch('http://localhost:8080/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({text: allText})
+                }).catch(e => {});
+
+                document.body.innerHTML = "<h1>DONE OCR</h1>";
+            } catch(e) {
+                console.error(e);
+            }
+        }
+        process();
+    </script>
+</body>
+</html>

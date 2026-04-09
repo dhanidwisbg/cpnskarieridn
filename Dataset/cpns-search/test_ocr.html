@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDF OCR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
+    <style>
+        body { font-family: sans-serif; white-space: pre-wrap; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <h1>Processing PDF... please wait.</h1>
+    <div id="output">Wait dynamically load the pdf...</div>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        async function process() {
+            try {
+                const pdf = await pdfjsLib.getDocument('cpns.pdf').promise;
+                document.getElementById('output').innerText += "PDF Loaded. Pages: " + pdf.numPages + "\n";
+                let allText = "";
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    document.getElementById('output').innerText += "Processing page " + i + "...\n";
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: 2.0 });
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                    
+                    const result = await Tesseract.recognize(
+                        canvas,
+                        'eng+ind',
+                        { logger: m => console.log(m) }
+                    );
+                    
+                    allText += "--- PAGE " + i + " ---\n" + result.data.text + "\n";
+                }
+                
+                document.getElementById('output').innerText = "DONE OCR:\n\n" + allText;
+
+                fetch('http://localhost:8080/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({text: allText})
+                }).catch(e => {});
+
+            } catch(e) {
+                document.getElementById('output').innerText = "ERROR: " + e;
+            }
+        }
+        process();
+    </script>
+</body>
+</html>
