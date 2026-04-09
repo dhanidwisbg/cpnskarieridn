@@ -26,9 +26,9 @@ const isRawValid = (raw) => {
 // Regex: gelar di awal
 const EDU_PREFIX_RE = /^(S[-–]?\s*[123]|D[-–]?\s*(IV|III|II|I|[1-4]))\s+/i;
 // Regex: hanya gelar (standalone)
-const EDU_ONLY_RE   = /^(S[-–]?\s*[123]|D[-–]?\s*(IV|III|II|I|[1-4]))\s*$/i;
+const EDU_ONLY_RE = /^(S[-–]?\s*[123]|D[-–]?\s*(IV|III|II|I|[1-4]))\s*$/i;
 // Regex: gelar di akhir string
-const EDU_TRAIL_RE  = /\s+(S[-–]?\s*[123]|D[-–]?\s*(IV|III|II|I|[1-4]))\s*$/i;
+const EDU_TRAIL_RE = /\s+(S[-–]?\s*[123]|D[-–]?\s*(IV|III|II|I|[1-4]))\s*$/i;
 
 const normalizeEdu = (s) => s.trim()
   .replace(/S[-–]?\s*1/i, 'S-1')
@@ -117,7 +117,7 @@ const processJurusan = (raw) => {
 
   // Step 3: pisahkan gelar standalone (misal "S-1", "D-IV" sendirian) vs segment konten
   const standalone = [];
-  const segments   = [];
+  const segments = [];
   allParts.forEach(p => {
     if (EDU_ONLY_RE.test(p)) standalone.push(normalizeEdu(p));
     else segments.push(p);
@@ -164,7 +164,7 @@ const cleanInstansi = (name) => {
     .replace(/\s+/g, ' ')
     .replace(/Kementrian/gi, 'Kementerian')
     .replace(/Sumatra/gi, 'Sumatera')
-    .replace(/Kemendes/gi, 'KEMENTERIAN DESA, PEMBANGUNAN DAERAH TERTINGGAL, DAN TRANSMIGRASI')
+    .replace(/Kemendes/gi, 'Kementerian Desa, Pembangunan Daerah Tertinggal, dan Transmigrasi')
     .replace(/Kemenkes/gi, 'Kementerian Kesehatan')
     .replace(/\(\d+\)$/, '')
     .trim();
