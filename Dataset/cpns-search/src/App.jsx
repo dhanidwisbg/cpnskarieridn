@@ -164,6 +164,8 @@ const cleanInstansi = (name) => {
     .replace(/\s+/g, ' ')
     .replace(/Kementrian/gi, 'Kementerian')
     .replace(/Sumatra/gi, 'Sumatera')
+    .replace(/Kemendes/gi, 'KEMENTERIAN DESA, PEMBANGUNAN DAERAH TERTINGGAL, DAN TRANSMIGRASI')
+    .replace(/Kemenkes/gi, 'Kementerian Kesehatan')
     .replace(/\(\d+\)$/, '')
     .trim();
 };
