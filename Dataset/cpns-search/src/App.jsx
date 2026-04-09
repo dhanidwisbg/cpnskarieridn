@@ -5,6 +5,128 @@ import driveMapping from './drive_mapping.json';
 import logoImg from './assets/logo-transparan.png';
 import { supabase } from './supabase';
 
+// ── JURUSAN NORMALIZATION HELPERS (module-level, tidak re-create setiap render) ──
+
+// Prefix yang jelas bukan nama jurusan (teks sampah dari ekstraksi PDF)
+const INVALID_STARTS = [
+  'NO JABATAN', 'NO NAMA JABATAN', 'YTH.', 'YTH ', 'DI LINGKUNGAN', 'DI JAKARTA',
+  'DI PROVINSI', 'DI PEMERINTAHAN', 'CPNS NO', 'TENTANG SELEKSI', 'TENTANG PENGADAAN',
+  'LIHAT DETAIL', 'CALON PEGAWAI', 'PENGADAAN CPNS', 'SELEKSI PENGADAAN',
+  'FORMASI TAHUN', 'KEPUTUSAN', 'PENGUMUMAN', 'LAMPIRAN', 'NOMOR', 'NO.',
+  'PERATURAN', 'ALOKASI FORMASI', 'UNIT PENEMPATAN', 'KUALIFIKASI PENDIDIKAN',
+  'BADAN KEPEGAWAIAN', 'BADAN KARANTINA', 'BADAN INFORMASI',
+];
+const isRawValid = (raw) => {
+  if (!raw || raw.trim().length < 4) return false;
+  if (raw.trim().length > 200) return false;
+  const upper = raw.trim().toUpperCase();
+  return !INVALID_STARTS.some(p => upper.startsWith(p));
+};
+
+// Regex: gelar di awal
+const EDU_PREFIX_RE = /^(S[-–]?\s*[123]|D[-–]?\s*(IV|III|II|I|[1-4]))\s+/i;
+// Regex: hanya gelar (standalone)
+const EDU_ONLY_RE   = /^(S[-–]?\s*[123]|D[-–]?\s*(IV|III|II|I|[1-4]))\s*$/i;
+// Regex: gelar di akhir string
+const EDU_TRAIL_RE  = /\s+(S[-–]?\s*[123]|D[-–]?\s*(IV|III|II|I|[1-4]))\s*$/i;
+
+const normalizeEdu = (s) => s.trim()
+  .replace(/S[-–]?\s*1/i, 'S-1')
+  .replace(/S[-–]?\s*2/i, 'S-2')
+  .replace(/S[-–]?\s*3/i, 'S-3')
+  .replace(/D[-–]?\s*(IV|4)/i, 'D-IV')
+  .replace(/D[-–]?\s*(III|3)/i, 'D-III')
+  .replace(/D[-–]?\s*(II|2)/i, 'D-II')
+  .replace(/D[-–]?\s*(I|1)/i, 'D-I');
+
+const toTitle = (str) => str.toLowerCase()
+  .replace(/(?:^|\s)\S/g, c => c.toUpperCase())  // capitalize first letter each word
+  .replace(/\bD-Iv\b/g, 'D-IV').replace(/\bD-Iii\b/g, 'D-III')
+  .replace(/\bD-Ii\b/g, 'D-II').replace(/\bD-I\b/g, 'D-I')
+  .replace(/\bS-([123])\b/g, (_, n) => `S-${n}`);
+
+// Normalisasi satu segment jurusan (tanpa slash)
+const normOnePart = (part) => {
+  let s = part.trim()
+    .replace(/[\s,;\/]+$/, '').trim()   // strip trailing junk
+    .replace(/\)+$/, '').trim();        // strip trailing paren
+  if (!s || s.length < 3) return null;
+
+  // Kasus 1: gelar di depan → normalize + title case sisanya
+  if (EDU_PREFIX_RE.test(s)) {
+    const m = s.match(EDU_PREFIX_RE);
+    const edu = normalizeEdu(m[1]);
+    const name = s.slice(m[0].length).trim();
+    if (!name || name.length < 2) return null;
+    return `${edu} ${toTitle(name)}`;
+  }
+
+  // Kasus 2: gelar di belakang → pindah ke depan
+  const trail = s.match(EDU_TRAIL_RE);
+  if (trail) {
+    const edu = normalizeEdu(trail[1]);
+    const name = s.slice(0, trail.index).trim();
+    if (name.length >= 3) return `${edu} ${toTitle(name)}`;
+  }
+
+  // Kasus 3: tidak ada gelar → title case saja
+  return toTitle(s);
+};
+
+// Proses satu entri jurusan (mungkin ada slash): return array of normalized jurusan strings
+const processJurusan = (raw) => {
+  if (!raw || !isRawValid(raw)) return [];
+  const parts = raw.split(/\s*\/\s*/).map(p => p.trim()).filter(Boolean);
+  if (parts.length === 0) return [];
+
+  // Single part
+  if (parts.length === 1) {
+    const n = normOnePart(parts[0]);
+    return n && n.length >= 5 ? [n] : [];
+  }
+
+  // Multi-part: pisahkan gelar standalone vs. segment dengan konten
+  const standalone = [];  // gelar luang, misal "S-1", "D-IV"
+  const segments   = [];  // segment dengan nama jurusan
+  parts.forEach(p => {
+    if (EDU_ONLY_RE.test(p)) standalone.push(normalizeEdu(p));
+    else segments.push(p);
+  });
+
+  const results = [];
+  const usedDeg = new Set();
+
+  segments.forEach(seg => {
+    if (EDU_PREFIX_RE.test(seg)) {
+      // Sudah punya gelar di depan
+      const n = normOnePart(seg);
+      if (n && n.length >= 5) results.push(n);
+    } else {
+      // Tidak punya gelar di depan → ambil gelar dari trailing atau standalone
+      const trail = seg.match(EDU_TRAIL_RE);
+      if (trail) {
+        // Gelar di akhir segment ini sendiri
+        const n = normOnePart(seg);
+        if (n && n.length >= 5) results.push(n);
+      } else {
+        // Ambil dari pool standalone yang belum dipakai
+        const avail = standalone.find(d => !usedDeg.has(d));
+        if (avail) {
+          usedDeg.add(avail);
+          const n = normOnePart(`${avail} ${seg}`);
+          if (n && n.length >= 5) results.push(n);
+        } else {
+          // Tidak ada gelar → title case biasa
+          const n = normOnePart(seg);
+          if (n && n.length >= 5) results.push(n);
+        }
+      }
+    }
+  });
+
+  return results;
+};
+
 function App({ user, onLogout, onUpgrade }) {
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(30);
@@ -74,35 +196,17 @@ function App({ user, onLogout, onUpgrade }) {
     'D4': /d[- ]?(iv|4)\b/i
   };
 
-  // Prefix yang menandakan jurusan tidak valid (teks dokumen PDF, bukan nama jurusan)
-  const INVALID_JURUSAN_STARTS = [
-    'NO JABATAN', 'YTH.', 'YTH ', 'DI LINGKUNGAN', 'DI JAKARTA', 'DI PROVINSI',
-    'CPNS NO', 'TENTANG SELEKSI', 'TENTANG PENGADAAN', 'LIHAT DETAIL',
-    'CALON PEGAWAI', 'PENGADAAN CPNS', 'SELEKSI PENGADAAN', 'FORMASI TAHUN',
-    'KEPUTUSAN', 'PENGUMUMAN', 'LAMPIRAN', 'NOMOR', 'NO.', 'PERATURAN',
-    'ALOKASI FORMASI', 'UNIT PENEMPATAN', 'KUALIFIKASI PENDIDIKAN',
-  ];
-
-  const isValidJurusan = (jurusan) => {
-    if (!jurusan || jurusan.trim().length < 3) return false;
-    if (jurusan.trim().length > 120) return false; // nama jurusan valid biasanya pendek
-    const upper = jurusan.trim().toUpperCase();
-    return !INVALID_JURUSAN_STARTS.some(prefix => upper.startsWith(prefix));
-  };
-
-  // Pecah jurusan yang menggabungkan beberapa jurusan dengan "/" jadi entri terpisah
-  // Contoh: "S-1 Biologi / D-IV Akuakultur" → 2 kartu
+  // Expand + normalisasi semua entri (pakai processJurusan yang sudah di module level)
   const expandedData = useMemo(() => {
     const out = [];
-    agencyData.forEach((item, idx) => {
-      const raw = item.jurusan || '';
-      // Split pada " / " (slash dengan spasi) atau newline
-      const parts = raw.split(/\s*\/\s*|\r?\n/).map(p => p.trim()).filter(p => p.length >= 5);
-      if (parts.length <= 1) {
-        out.push(item);
+    agencyData.forEach((item) => {
+      const normalized = processJurusan(item.jurusan || '');
+      if (normalized.length === 0) return;
+      if (normalized.length === 1) {
+        out.push({ ...item, jurusan: normalized[0] });
       } else {
-        parts.forEach((part, i) => {
-          out.push({ ...item, id: `${item.id}_${i}`, jurusan: part });
+        normalized.forEach((jurusan, i) => {
+          out.push({ ...item, id: `${item.id}_${i}`, jurusan });
         });
       }
     });
@@ -110,9 +214,7 @@ function App({ user, onLogout, onUpgrade }) {
   }, []);
 
   const baseResults = useMemo(() => {
-    // Filter jurusan tidak valid dulu, dari data yang sudah dipecah
-    let filtered = expandedData.filter(item => isValidJurusan(item.jurusan));
-
+    let filtered = expandedData;
     if (selectedCategory !== 'Semua') {
       filtered = filtered.filter(item => {
         const isDaerah = item.instansi.includes('Kab.') || item.instansi.includes('Kota') || item.instansi.includes('Prov');
