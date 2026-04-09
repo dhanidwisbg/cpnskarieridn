@@ -585,8 +585,8 @@ function App({ user, onLogout, onUpgrade }) {
                     const urlSplit = item.link_pdf.split('/d/');
                     const matchId = urlSplit.length > 1 ? urlSplit[1].split('/')[0] : null;
                     if (matchId) {
-                      // Redirect to the direct PDF file stream instead of Google Drive Viewer
-                      pdfHref = `https://drive.google.com/uc?id=${matchId}`;
+                      // Open in Google Drive Viewer to prevent auto-download
+                      pdfHref = `https://drive.google.com/file/d/${matchId}/view`;
                     } else {
                       pdfHref = item.link_pdf;
                     }
