@@ -157,6 +157,18 @@ const processJurusan = (raw) => {
 };
 
 
+// Clean Instansi Name
+const cleanInstansi = (name) => {
+  if (!name) return '';
+  return name.trim()
+    .replace(/\s+/g, ' ')
+    .replace(/Kementrian/gi, 'Kementerian')
+    .replace(/Sumatra/gi, 'Sumatera')
+    .replace(/\(\d+\)$/, '')
+    .trim();
+};
+
+
 function App({ user, onLogout, onUpgrade }) {
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(30);
@@ -214,8 +226,8 @@ function App({ user, onLogout, onUpgrade }) {
   }, [user.id]);
 
   const allUniqueInstansi = useMemo(() => {
-    return Array.from(new Set(agencyData.map(d => d.instansi))).sort();
-  }, []);
+    return Array.from(new Set(expandedData.map(d => d.instansi))).sort();
+  }, [expandedData]);
 
   const educationRegex = {
     'S1': /s[- ]?1\b/i,
@@ -230,13 +242,14 @@ function App({ user, onLogout, onUpgrade }) {
   const expandedData = useMemo(() => {
     const out = [];
     agencyData.forEach((item) => {
+      const cleanedInstansi = cleanInstansi(item.instansi);
       const normalized = processJurusan(item.jurusan || '');
       if (normalized.length === 0) return;
       if (normalized.length === 1) {
-        out.push({ ...item, jurusan: normalized[0] });
+        out.push({ ...item, instansi: cleanedInstansi, jurusan: normalized[0] });
       } else {
         normalized.forEach((jurusan, i) => {
-          out.push({ ...item, id: `${item.id}_${i}`, jurusan });
+          out.push({ ...item, id: `${item.id}_${i}`, instansi: cleanedInstansi, jurusan });
         });
       }
     });
