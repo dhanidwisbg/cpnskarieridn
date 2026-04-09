@@ -90,9 +90,28 @@ function App({ user, onLogout, onUpgrade }) {
     return !INVALID_JURUSAN_STARTS.some(prefix => upper.startsWith(prefix));
   };
 
+  // Pecah jurusan yang menggabungkan beberapa jurusan dengan "/" jadi entri terpisah
+  // Contoh: "S-1 Biologi / D-IV Akuakultur" → 2 kartu
+  const expandedData = useMemo(() => {
+    const out = [];
+    agencyData.forEach((item, idx) => {
+      const raw = item.jurusan || '';
+      // Split pada " / " (slash dengan spasi) atau newline
+      const parts = raw.split(/\s*\/\s*|\r?\n/).map(p => p.trim()).filter(p => p.length >= 5);
+      if (parts.length <= 1) {
+        out.push(item);
+      } else {
+        parts.forEach((part, i) => {
+          out.push({ ...item, id: `${item.id}_${i}`, jurusan: part });
+        });
+      }
+    });
+    return out;
+  }, []);
+
   const baseResults = useMemo(() => {
-    // Pertama: buang entri dengan jurusan tidak valid
-    let filtered = agencyData.filter(item => isValidJurusan(item.jurusan));
+    // Filter jurusan tidak valid dulu, dari data yang sudah dipecah
+    let filtered = expandedData.filter(item => isValidJurusan(item.jurusan));
 
     if (selectedCategory !== 'Semua') {
       filtered = filtered.filter(item => {
@@ -110,7 +129,7 @@ function App({ user, onLogout, onUpgrade }) {
       filtered = filtered.filter(item => item.instansi.toLowerCase() === selectedInstansi.toLowerCase());
     }
     return filtered;
-  }, [selectedCategory, selectedEducation, selectedInstansi]);
+  }, [expandedData, selectedCategory, selectedEducation, selectedInstansi]);
 
   // Search: setiap kata di query harus ada di jurusan atau instansi (substring match)
   // Contoh: "agro teknologi" → harus ada "agro" DAN "teknologi" di jurusan/instansi
