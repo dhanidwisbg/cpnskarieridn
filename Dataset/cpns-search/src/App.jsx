@@ -225,10 +225,6 @@ function App({ user, onLogout, onUpgrade }) {
     }
   }, [user.id]);
 
-  const allUniqueInstansi = useMemo(() => {
-    return Array.from(new Set(expandedData.map(d => d.instansi))).sort();
-  }, [expandedData]);
-
   const educationRegex = {
     'S1': /s[- ]?1\b/i,
     'S2': /s[- ]?2\b/i,
@@ -255,6 +251,10 @@ function App({ user, onLogout, onUpgrade }) {
     });
     return out;
   }, []);
+
+  const allUniqueInstansi = useMemo(() => {
+    return Array.from(new Set(expandedData.map(d => d.instansi))).sort();
+  }, [expandedData]);
 
   const baseResults = useMemo(() => {
     let filtered = expandedData;
