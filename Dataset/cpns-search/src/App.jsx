@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import Fuse from 'fuse.js';
 import { Search, FileText, ChevronDown, X, Building2, MapPin, Sparkles, GraduationCap, Briefcase, SlidersHorizontal, LogOut } from 'lucide-react';
 import agencyData from './data.json';
 import driveMapping from './drive_mapping.json';
@@ -95,15 +94,22 @@ function App({ user, onLogout, onUpgrade }) {
     return filtered;
   }, [selectedCategory, selectedEducation, selectedInstansi]);
 
-  const fuse = useMemo(() => new Fuse(baseResults, {
-    keys: ['jurusan', 'instansi'],
-    threshold: 0.35,
-  }), [baseResults]);
-
+  // Search: setiap kata di query harus ada di jurusan atau instansi (substring match)
+  // Contoh: "agro teknologi" → harus ada "agro" DAN "teknologi" di jurusan/instansi
+  // Ini mencegah "bioteknologi" muncul saat search "agroteknologi"
   const results = useMemo(() => {
-    if (!query.trim()) return baseResults;
-    return fuse.search(query).map(r => r.item);
-  }, [query, fuse, baseResults]);
+    const q = query.trim();
+    if (!q) return baseResults;
+
+    // Pecah query jadi token kata (spasi, strip, atau slash)
+    const tokens = q.toLowerCase().split(/[\s\-\/]+/).filter(Boolean);
+
+    return baseResults.filter(item => {
+      const haystack = (item.jurusan + ' ' + item.instansi).toLowerCase();
+      // Semua token harus ada di haystack (AND logic)
+      return tokens.every(token => haystack.includes(token));
+    });
+  }, [query, baseResults]);
 
   const displayed = useMemo(() => results.slice(0, limit), [results, limit]);
   const activeFilters = (selectedCategory !== 'Semua' ? 1 : 0) + (selectedEducation !== 'Semua' ? 1 : 0) + (selectedInstansi ? 1 : 0);
