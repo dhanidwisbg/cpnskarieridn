@@ -14,21 +14,57 @@ const INVALID_STARTS = [
   'LIHAT DETAIL', 'CALON PEGAWAI', 'PENGADAAN CPNS', 'SELEKSI PENGADAAN',
   'FORMASI TAHUN', 'KEPUTUSAN', 'PENGUMUMAN', 'LAMPIRAN', 'NOMOR', 'NO.',
   'PERATURAN', 'ALOKASI FORMASI', 'UNIT PENEMPATAN', 'KUALIFIKASI PENDIDIKAN',
-  'BADAN KEPEGAWAIAN', 'BADAN KARANTINA', 'BADAN INFORMASI',
+  'BADAN KEPEGAWAIAN', 'BADAN KARANTINA', 'BADAN INFORMASI', 'DITETAPKAN DI',
+  'KEPADA YTH', 'DI TEMPAT', 'A.N.', 'PLT.', 'PLH.', 'KEMENTERIAN DESA',
+  'KEPALA BADAN', 'PEJABAT', 'DIREKTUR', 'SALINAN', 'MENTERI', 'PEMBINA',
+  'DI KABUPATEN', 'DI KOTA', 'DI KECAMATAN',
 ];
+
+const MAJOR_KEYWORDS = [
+  'TEKNIK', 'ILMU', 'MANAJEMEN', 'PENDIDIKAN', 'EKONOMI', 'SOSIAL', 'HUKUM',
+  'KESEHATAN', 'SENI', 'PERTANIAN', 'KOMPUTER', 'INFORMATIKA', 'SOSIOLOGI',
+  'AKUNTANSI', 'PSIKOLOGI', 'FISIKA', 'KIMIA', 'BIOLOGI', 'MATEMATIKA',
+  'AGRIBISNIS', 'KOMUNIKASI', 'KEHUTANAN', 'KEPERAWATAN', 'KEBIDANAN',
+  'FARMASI', 'ADMINISTRASI', 'HUBUNGAN', 'LINGKUNGAN', 'PEMBANGUNAN',
+  'SASTRA', 'EKSTRAKURIKULER', 'GURU', 'DOSEN', 'DOKTER', 'ANALIS', 'PENGAWAS',
+  'PENGELOLA', 'ARSIPARIS', 'STATISTIK', 'PANGAN', 'GIZI', 'TEKNOLOGI',
+  'KEUANGAN', 'KEARSIPAN', 'TATA', 'USAHA', 'AGRO', 'HIDRO', 'GEO', 'BIO',
+  'FISIKA', 'KIMIA', 'BAHASA', 'LOKAL', 'KEAGAMAAN', 'SPIRITUAL', 'SYARIAH'
+];
+
+const isLikelyMajor = (normalized) => {
+  const upper = normalized.toUpperCase();
+  // Jika mengandung kata kunci jurusan, hampir pasti ini jurusan
+  if (MAJOR_KEYWORDS.some(k => upper.includes(k))) return true;
+  // Jika sangat pendek (misal "S-1"), anggap tidak valid jika tidak ada keyword
+  const withoutEdu = normalized.replace(/^(S[-–]?[123]|D[-–]?(?:IV|III|II|I))\s*/i, '').trim();
+  if (withoutEdu.length < 5) return false;
+  // Jika tidak ada kata kunci jurusan, tapi panjang dan bukan S-1/D-III, mungkin junk
+  return false;
+};
+
 const isRawValid = (raw) => {
   if (!raw || raw.trim().length < 4) return false;
   if (raw.trim().length > 200) return false;
   const upper = raw.trim().toUpperCase();
-  return !INVALID_STARTS.some(p => upper.startsWith(p));
+  if (INVALID_STARTS.some(p => upper.startsWith(p))) return false;
+  // Khusus "DI " yang diikuti nama (seringkali tanda tangan)
+  // D-I valid biasanya diikuti spasi lalu nama jurusan.
+  // Tapi kalau setelah "DI " cuma 1 kata dan tidak ada keyword major, tolak.
+  if (upper.startsWith('DI ')) {
+    const after = upper.slice(3).trim();
+    if (!MAJOR_KEYWORDS.some(k => after.includes(k))) return false;
+  }
+  return true;
 };
 
-// Regex: gelar di awal
-const EDU_PREFIX_RE = /^(S[-–]?\s*[123]|D[-–]?\s*(IV|III|II|I|[1-4]))\s+/i;
+// Regex: gelar di awal (D-I, D-III, S-1, dsb)
+// Khusus untuk DI, kita buat lebih ketat agar tidak tertukar dengan kata depan "DI"
+const EDU_PREFIX_RE = /^(S[-–]?\s*[123]|D[-–]?\s*(?:IV|III|II)|D[-–]\s*I|D\.\s*I|D\s+I)\s+/i;
 // Regex: hanya gelar (standalone)
-const EDU_ONLY_RE = /^(S[-–]?\s*[123]|D[-–]?\s*(IV|III|II|I|[1-4]))\s*$/i;
+const EDU_ONLY_RE = /^(S[-–]?\s*[123]|D[-–]?\s*(?:IV|III|II)|D[-–]\s*I|D\s+I)\s*$/i;
 // Regex: gelar di akhir string
-const EDU_TRAIL_RE = /\s+(S[-–]?\s*[123]|D[-–]?\s*(IV|III|II|I|[1-4]))\s*$/i;
+const EDU_TRAIL_RE = /\s+(S[-–]?\s*[123]|D[-–]?\s*(?:IV|III|II)|D[-–]\s*I|D\s+I)\s*$/i;
 
 const normalizeEdu = (s) => s.trim()
   .replace(/S[-–]?\s*1/i, 'S-1')
@@ -126,6 +162,7 @@ const processJurusan = (raw) => {
   if (segments.length === 0) return [];
 
   const results = [];
+  const finalResults = [];
   const usedDeg = new Set();
 
   segments.forEach(seg => {
@@ -153,7 +190,11 @@ const processJurusan = (raw) => {
     }
   });
 
-  return results;
+  results.forEach(res => {
+    if (isLikelyMajor(res)) finalResults.push(res);
+  });
+
+  return finalResults;
 };
 
 
