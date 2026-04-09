@@ -74,8 +74,26 @@ function App({ user, onLogout, onUpgrade }) {
     'D4': /d[- ]?(iv|4)\b/i
   };
 
+  // Prefix yang menandakan jurusan tidak valid (teks dokumen PDF, bukan nama jurusan)
+  const INVALID_JURUSAN_STARTS = [
+    'NO JABATAN', 'YTH.', 'YTH ', 'DI LINGKUNGAN', 'DI JAKARTA', 'DI PROVINSI',
+    'CPNS NO', 'TENTANG SELEKSI', 'TENTANG PENGADAAN', 'LIHAT DETAIL',
+    'CALON PEGAWAI', 'PENGADAAN CPNS', 'SELEKSI PENGADAAN', 'FORMASI TAHUN',
+    'KEPUTUSAN', 'PENGUMUMAN', 'LAMPIRAN', 'NOMOR', 'NO.', 'PERATURAN',
+    'ALOKASI FORMASI', 'UNIT PENEMPATAN', 'KUALIFIKASI PENDIDIKAN',
+  ];
+
+  const isValidJurusan = (jurusan) => {
+    if (!jurusan || jurusan.trim().length < 3) return false;
+    if (jurusan.trim().length > 120) return false; // nama jurusan valid biasanya pendek
+    const upper = jurusan.trim().toUpperCase();
+    return !INVALID_JURUSAN_STARTS.some(prefix => upper.startsWith(prefix));
+  };
+
   const baseResults = useMemo(() => {
-    let filtered = agencyData;
+    // Pertama: buang entri dengan jurusan tidak valid
+    let filtered = agencyData.filter(item => isValidJurusan(item.jurusan));
+
     if (selectedCategory !== 'Semua') {
       filtered = filtered.filter(item => {
         const isDaerah = item.instansi.includes('Kab.') || item.instansi.includes('Kota') || item.instansi.includes('Prov');
