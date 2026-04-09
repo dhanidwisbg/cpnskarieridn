@@ -580,11 +580,23 @@ function App({ user, onLogout, onUpgrade }) {
               <>
                 {displayed.map((item) => {
                   const isDaerah = item.instansi.includes('Kab.') || item.instansi.includes('Kota') || item.instansi.includes('Prov');
-                  const filename = item.link_pdf.split('/').pop();
-                  const driveId = driveMapping[filename] || driveMapping[decodeURIComponent(filename)];
-                  const pdfHref = driveId
-                    ? `https://drive.google.com/file/d/${driveId}/view`
-                    : `https://drive.google.com/drive/folders/1CdGGrC9BAY4hp6vui16iV6TL3cvLDUfL?q=${encodeURIComponent(filename)}`;
+                  let pdfHref = '';
+                  if (item.link_pdf.startsWith('http')) {
+                    const urlSplit = item.link_pdf.split('/d/');
+                    const matchId = urlSplit.length > 1 ? urlSplit[1].split('/')[0] : null;
+                    if (matchId) {
+                      // Redirect to the direct PDF file stream instead of Google Drive Viewer
+                      pdfHref = `https://drive.google.com/uc?id=${matchId}`;
+                    } else {
+                      pdfHref = item.link_pdf;
+                    }
+                  } else {
+                    const filename = item.link_pdf.split('/').pop();
+                    const driveId = driveMapping[filename] || driveMapping[decodeURIComponent(filename)];
+                    pdfHref = driveId
+                      ? `https://drive.google.com/file/d/${driveId}/view`
+                      : `https://drive.google.com/drive/folders/1CdGGrC9BAY4hp6vui16iV6TL3cvLDUfL?q=${encodeURIComponent(filename)}`;
+                  }
 
                   return (
                     <div key={item.id} className="result-card">
