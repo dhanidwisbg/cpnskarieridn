@@ -292,7 +292,7 @@ function App({ user, onLogout, onUpgrade }) {
       }
     });
     return out;
-  }, []);
+  }, [agencyData]);
 
   const allUniqueInstansi = useMemo(() => {
     return Array.from(new Set(expandedData.map(d => d.instansi))).sort();
