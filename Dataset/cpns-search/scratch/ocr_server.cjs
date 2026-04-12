@@ -14,7 +14,14 @@ app.post('/submit', (req, res) => {
     res.json({ status: 'ok' });
 });
 
+app.post('/submit_kementan', (req, res) => {
+    const { text } = req.body;
+    console.log(`Received Kementan OCR results (${text.length} chars)`);
+    fs.appendFileSync(path.join(__dirname, 'kementan_ocr.txt'), text + '\n');
+    res.json({ status: 'ok' });
+});
+
 app.listen(port, () => {
     console.log(`OCR Server running at http://localhost:${port}`);
-    console.log(`Open http://localhost:${port}/scratch/ocr_worker.html in browser to start.`);
+    console.log(`Open http://localhost:${port}/scratch/ocr_worker_kementan.html in browser to start.`);
 });
