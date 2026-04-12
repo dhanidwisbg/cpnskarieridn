@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kemenkes PDF OCR Worker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://unpkg.com/tesseract.js@5.0.3/dist/tesseract.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; padding: 20px; color: #1e293b; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; borderRadius: 20px; boxShadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .progress-bar { height: 12px; background: #e2e8f0; borderRadius: 6px; overflow: hidden; margin: 20px 0; }
+        .progress-fill { height: 100%; background: #007FFF; width: 0%; transition: width 0.3s; }
+        .status { font-weight: 800; color: #007FFF; }
+        .log { height: 200px; overflow-y: auto; background: #f1f5f9; padding: 10px; borderRadius: 10px; fontSize: 11px; fontFamily: monospace; margin-top: 10px; }
+        h1 { margin-top: 0; fontSize: 24px; fontWeight: 900; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kemenkes OCR Processing</h1>
+        <p>Status: <span id="status" class="status">Initializing...</span></p>
+        <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
+        <p id="stats">Page: 0 / 0</p>
+        <div id="log" class="log"></div>
+    </div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const logElem = document.getElementById('log');
+        const statusElem = document.getElementById('status');
+        const progressElem = document.getElementById('progress');
+        const statsElem = document.getElementById('stats');
+
+        function log(msg) {
+            const div = document.createElement('div');
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logElem.appendChild(div);
+            logElem.scrollTop = logElem.scrollHeight;
+            console.log(msg);
+        }
+
+        async function process() {
+            try {
+                log("Loading kemenkes.pdf...");
+                const pdf = await pdfjsLib.getDocument('../kemenkes.pdf').promise;
+                const totalPages = pdf.numPages;
+                log(`PDF Loaded. Total pages: ${totalPages}`);
+                statsElem.innerText = `Page: 0 / ${totalPages}`;
+
+                const worker = await Tesseract.createWorker('ind+eng', 1, {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const p = (m.progress * 100).toFixed(1);
+                            // log(`OCR Progress: ${p}%`);
+                        }
+                    }
+                });
+
+                for (let i = 1; i <= totalPages; i++) {
+                    statusElem.innerText = `Processing Page ${i}...`;
+                    log(`Rendering page ${i}...`);
+                    
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: 2.0 }); // High scale for better OCR
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                    
+                    log(`OCR starting for page ${i}...`);
+                    const { data: { text } } = await worker.recognize(canvas);
+                    
+                    log(`OCR complete for page ${i}. Sending results...`);
+                    
+                    const resultText = `--- PAGE ${i} ---\n${text}\n`;
+                    
+                    await fetch('/submit', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text: resultText })
+                    });
+
+                    const progressPercent = (i / totalPages) * 100;
+                    progressElem.style.width = `${progressPercent}%`;
+                    statsElem.innerText = `Page: ${i} / ${totalPages}`;
+                }
+
+                log("DONE! Entire document processed.");
+                statusElem.innerText = "COMPLETED";
+                await worker.terminate();
+
+            } catch (e) {
+                log(`ERROR: ${e.message}`);
+                statusElem.innerText = "ERROR";
+                console.error(e);
+            }
+        }
+
+        process();
+    </script>
+</body>
+</html>

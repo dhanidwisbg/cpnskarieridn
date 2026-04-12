@@ -272,7 +272,6 @@ function App({ user, onLogout, onUpgrade }) {
     'S1': /s[- ]?1\b/i,
     'S2': /s[- ]?2\b/i,
     'S3': /s[- ]?3\b/i,
-    'D1': /d[- ]?(i|1)\b/i,
     'D3': /d[- ]?(iii|3)\b/i,
     'D4': /d[- ]?(iv|4)\b/i
   };
@@ -576,7 +575,7 @@ function App({ user, onLogout, onUpgrade }) {
                 </div>
                 <p style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1.5, margin: '12px 0 8px' }}>Pendidikan</p>
                 <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-                  {['Semua', 'S1', 'S2', 'S3', 'D1', 'D3', 'D4'].map(edu => (
+                  {['Semua', 'S1', 'S2', 'S3', 'D3', 'D4'].map(edu => (
                     <button
                       key={edu}
                       onClick={() => { setSelectedEducation(edu); setLimit(30); }}
