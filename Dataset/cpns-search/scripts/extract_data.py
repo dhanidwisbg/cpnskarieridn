@@ -4,15 +4,16 @@ import re
 from pypdf import PdfReader
 
 # Paths to the datasets
-BASE_DIR = r'c:\Users\dhani\Documents\CPNS\Dataset'
-# Note: We assume the user will copy these into public/pdfs/
+# Paths to the datasets
+# We will use the local public/pdfs folder as the source
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FOLDERS = [
-    os.path.join(BASE_DIR, '01. Instansi Pusat'),
-    os.path.join(BASE_DIR, '02. Instansi Daerah')
+    os.path.join(BASE_DIR, 'public', 'pdfs', 'pusat'),
+    os.path.join(BASE_DIR, 'public', 'pdfs', 'daerah')
 ]
 
 # Output file path
-OUTPUT_FILE = os.path.join(BASE_DIR, 'cpns-search', 'src', 'data.json')
+OUTPUT_FILE = os.path.join(BASE_DIR, 'src', 'data.json')
 
 def clean_instansi_name(filename):
     name = os.path.splitext(filename)[0]
@@ -36,9 +37,8 @@ def extract_majors_from_pdf(filepath):
         majors_found = set()
         
         # Improved regex to capture degrees like S-1, D-IV, D-III, etc.
-        # This handles cases where degree is at start or end, and captures Roman numerals.
-        # Pattern: (Degree) (Major Name) or (Major Name) (Degree)
-        degree_pattern = r'(?:S-?[123]|D-?[IVX]+|PROFESI|PENDIDIKAN PROFESI|DIPLOMA\s+[IVX]+)'
+        # Added: SMA, SMK, SLTA, SLTP, SMU, MA, MAN, SMP
+        degree_pattern = r'(?:S-?[123]|D-?[IVX]+|PROFESI|PENDIDIKAN PROFESI|DIPLOMA\s+[IVX]+|SMA|SMK|SLTA|SLTP|SMU|MA|MAN|SMP|SEDERAJAT)'
         
         # Look for patterns like "S-1 TEKNOLOGI INFORMASI" or "TEKNOLOGI INFORMASI D-IV"
         # We also filter out common non-major strings
@@ -73,7 +73,27 @@ def extract_majors_from_pdf(filepath):
 
 def main():
     all_data = []
-    entry_id = 1
+    
+    # Load existing data to preserve special entries (like OCR'd Kemenkes/Kementan)
+    existing_data = []
+    if os.path.exists(OUTPUT_FILE):
+        with open(OUTPUT_FILE, 'r', encoding='utf-8') as f:
+            existing_data = json.load(f)
+    
+    # Track which agencies already have "real" data (not placeholders)
+    # We use a set of instansi names
+    agencies_with_real_data = set()
+    for entry in existing_data:
+        if entry.get('jurusan') != "LIHAT DETAIL DI PDF":
+            agencies_with_real_data.add(entry.get('instansi'))
+
+    print(f"Loaded {len(existing_data)} existing entries.")
+    print(f"Found {len(agencies_with_real_data)} agencies with real data already.")
+
+    processed_instansi = set()
+    
+    # We will prioritize new extraction but preserve existing real data
+    new_extracted_data = []
     
     print("Starting improved extraction from PDFs...")
     
@@ -85,44 +105,54 @@ def main():
         files = [f for f in os.listdir(folder) if f.lower().endswith('.pdf')]
         print(f"Found {len(files)} files in {os.path.basename(folder)}")
         
-        folder_slug = "pusat" if "Pusat" in folder else "daerah"
+        folder_slug = "pusat" if "pusat" in folder.lower() else "daerah"
         
         for filename in files:
             filepath = os.path.join(folder, filename)
             instansi = clean_instansi_name(filename)
+            processed_instansi.add(instansi)
             
-            # Use the /pdfs/ path which will be served from public/pdfs/
             link_path = f"/pdfs/{folder_slug}/{filename}"
             
+            # If this agency ALREADY has real data (like Kemenkes/Kementan), we skip parsing it
+            # unless we want to ADD SMA data to it. But for now, preservation is safer.
+            if instansi in agencies_with_real_data:
+                # Keep existing entries for this instansi
+                instansi_entries = [e for e in existing_data if e.get('instansi') == instansi]
+                new_extracted_data.extend(instansi_entries)
+                continue
+
             majors = extract_majors_from_pdf(filepath)
             
             if not majors:
-                all_data.append({
-                    "id": entry_id,
+                new_extracted_data.append({
+                    "id": 0, # Will re-index later
                     "instansi": instansi,
                     "jurusan": "LIHAT DETAIL DI PDF",
                     "link_pdf": link_path
                 })
-                entry_id += 1
             else:
                 for major in majors:
-                    all_data.append({
-                        "id": entry_id,
+                    new_extracted_data.append({
+                        "id": 0,
                         "instansi": instansi,
                         "jurusan": major,
                         "link_pdf": link_path
                     })
-                    entry_id += 1
             
-            if entry_id % 100 == 0:
-                print(f"Processed {entry_id} entries...")
+            if len(new_extracted_data) % 500 == 0:
+                print(f"Cumulative entries: {len(new_extracted_data)}...")
 
-    print(f"Extraction complete. Total entries: {len(all_data)}")
+    # Re-index all entries
+    for i, entry in enumerate(new_extracted_data):
+        entry['id'] = i + 1
+
+    print(f"Extraction complete. Total entries: {len(new_extracted_data)}")
     
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        json.dump(all_data, f, indent=2, ensure_ascii=False)
+        json.dump(new_extracted_data, f, indent=2, ensure_ascii=False)
     
-    print(f"Saved improved data to {OUTPUT_FILE}")
+    print(f"Saved merged data to {OUTPUT_FILE}")
 
 if __name__ == "__main__":
     main()
