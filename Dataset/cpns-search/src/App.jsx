@@ -18,13 +18,15 @@ const INVALID_STARTS = [
   'KEPADA YTH', 'DI TEMPAT', 'A.N.', 'PLT.', 'PLH.', 'KEMENTERIAN DESA',
   'KEPALA BADAN', 'PEJABAT', 'DIREKTUR', 'SALINAN', 'MENTERI', 'PEMBINA',
   'DI KABUPATEN', 'DI KOTA', 'DI KECAMATAN', 'RINCIAN KEBUTUHAN', 'UNTUK PENGADAAN',
-  'UNIT KERJA', 'PERSYARATAN KUALIFIKASI', 'TAHUN ANGGARAN'
+  'UNIT KERJA', 'PERSYARATAN KUALIFIKASI', 'TAHUN ANGGARAN', 'IJAZAH PENDIDIKAN',
+  'KELULUSAN SELEKSI', 'RENTANG PENGHASILAN'
 ];
 
 const JUNK_KEYWORDS = [
   'NO NAMA JABATAN', 'JUMLAH KEBUTUHAN', 'UNIT PENEMPATAN', 'KUALIFIKASI PENDIDIKAN',
   'ALOKASI FORMASI', 'RINCIAN KEBUTUHAN', 'UNTUK PENGADAAN', 'UNIT KERJA',
-  'PERSYARATAN KUALIFIKASI', 'RINCIAN PENETAPAN'
+  'PERSYARATAN KUALIFIKASI', 'RINCIAN PENETAPAN', 'JABATAN YANG DI',
+  'PENGHASILAN MINIMAL', 'JENIS FORMASI', 'NAMA JABATAN', 'MA JABATAN'
 ];
 
 const MAJOR_KEYWORDS = [
@@ -55,11 +57,17 @@ const isRawValid = (raw) => {
   if (raw.trim().length > 250) return false;
   const upper = raw.trim().toUpperCase();
   
-  // 1. Starts with check
+  // 1. Starts with check (keywords)
   if (INVALID_STARTS.some(p => upper.startsWith(p))) return false;
   
-  // 2. Contains check (for common header strings that might appear anywhere)
+  // 2. Starts with Index check (e.g. 1., A., Ii.)
+  if (/^(\d+|[A-Z]|li|Ii|Iv)\.\s+/i.test(raw.trim())) return false;
+  
+  // 3. Contains check (for common header strings)
   if (JUNK_KEYWORDS.some(k => upper.includes(k))) return false;
+
+  // 4. Special case: avoid entries that are just "JABATAN"
+  if (upper === 'JABATAN') return false;
 
   // Khusus "DI " yang diikuti nama (seringkali tanda tangan)
   if (upper.startsWith('DI ')) {

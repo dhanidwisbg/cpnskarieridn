@@ -5,10 +5,11 @@ import re
 # Paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_FILE = os.path.join(BASE_DIR, 'src', 'data.json')
-BACKUP_FILE = os.path.join(BASE_DIR, 'src', 'data.json.bak3')
+BACKUP_FILE = os.path.join(BASE_DIR, 'src', 'data.json.bak4')
 
-# Junk patterns (Regex)
+# Scorched Earth Junk Patterns
 JUNK_PATTERNS = [
+    # Table Headers & Column Names
     r"NO\.?\s*NAMA\s*JABATAN",
     r"JUMLAH\s*KEBUTUHAN",
     r"UNIT\s*PENEMPATAN",
@@ -27,7 +28,44 @@ JUNK_PATTERNS = [
     r"PENETAPAN\s*KEBUTUHAN",
     r"ALOKASI\s*CPNS",
     r"RINCIAN\s*PENETAPAN",
-    r"LIHAT\s*DETAIL\s*DI\s*PDF", # Optional: can remove if requested, but let's keep for now unless it's junk-like
+    r"LIHAT\s*DETAIL\s*DI\s*PDF",
+    
+    # New Screenshot Patterns
+    r"JABATAN\s*YANG\s*DILAMAR",
+    r"JABATAN\s*YANG\s*DI",
+    r"RENTANG\s*PENGHASILAN",
+    r"PENGHASILAN\s*MINIMAL",
+    r"IJAZAH\s*PENDIDIKAN",
+    r"SYARAT\s*PADA\s*JABATAN",
+    r"JENIS\s*FORMASI",
+    r"JENIS\s*KEBUTUHAN",
+    r"KELULUSAN\s*SELEKSI",
+    r"SELEKSI\s*ADMINISTRASI",
+    r"JABATAN\s*STRUKTURAL",
+    r"JABATAN\s*FUNGSIONAL",
+    r"KAB\.\s*WATAMPONE", # Example of location header junk
+    
+    # Generic Index Markers at start
+    r"^\s*(\d+|[A-Za-z]|li|Ii|Iv)\.\s+", # 1. , A. , li. , Ii.
+    r"^\s*\(\s*\d+\s*\)\s+", # (1)
+    
+    # Junk mentions of "JABATAN" in major name
+    r"\s+JABATAN\s*$", # Ends with 'Jabatan'
+    r"^\s*JABATAN\s+", # Starts with 'Jabatan'
+    
+    # "Ma " junk (if followed by JABATAN or similar)
+    r"^MA\s+.*JABATAN",
+    r"^MA\s+.*FORMASI",
+    r"^MA\s+.*KEBUTUHAN"
+]
+
+# Keywords that mark a string as almost certainly junk if found
+BLACKOUT_KEYWORDS = [
+    "PENGHASILAN MINIMAL",
+    "TUGAS JABATAN",
+    "SYARAT PENDAFTARAN",
+    "DOKUMEN PERSYARATAN",
+    "RINCIAN FORMASI"
 ]
 
 def clean_data():
@@ -58,14 +96,31 @@ def clean_data():
         jurusan = entry.get('jurusan', '')
         
         is_junk = False
+        
+        # 1. Regex check
         for reg in regexes:
             if reg.search(jurusan):
                 is_junk = True
                 break
         
+        # 2. Blackout keyword check
+        if not is_junk:
+            upper = jurusan.upper()
+            for k in BLACKOUT_KEYWORDS:
+                if k in upper:
+                    is_junk = True
+                    break
+        
+        # 3. String length filtering for fragments
+        if not is_junk:
+            if len(jurusan) > 150: # Very long fragments are usually headers
+                 is_junk = True
+            elif len(jurusan) < 4 and not re.match(r'^(MA|S\d|D\d)', jurusan, re.I):
+                 is_junk = True
+
         if is_junk:
             removed_count += 1
-            if len(removed_samples) < 10:
+            if len(removed_samples) < 15:
                 removed_samples.append(jurusan)
         else:
             cleaned_data.append(entry)
