@@ -515,7 +515,7 @@ function App({ user, onLogout, onUpgrade }) {
             Cek Referensi Formasi<br /><span style={{ color: '#FCD34D' }}>CPNS Lulusan Kamu</span>
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13, fontWeight: 500, margin: 0, lineHeight: 1.6 }}>
-            <strong style={{ color: 'white' }}>{agencyData.length.toLocaleString()}</strong> formasi dari<br />Instansi Pusat &amp; Daerah Berdasarkan CPNS 2024
+            <strong style={{ color: 'white' }}>40.000 lebih</strong> formasi dari<br />Instansi Pusat &amp; Daerah Berdasarkan CPNS 2024
           </p>
         </div>
       </div>
