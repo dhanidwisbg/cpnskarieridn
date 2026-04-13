@@ -812,16 +812,14 @@ function App({ user, userProfile, onLogout, onUpgrade, onOpenAdmin }) {
         }
         .results-section {
           padding: 20px 16px 100px;
+          max-width: 480px;
+          margin: 0 auto;
+          width: 100%;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         /* Badge highlight for admin users if needed */
         .admin-glow {
           box-shadow: 0 0 15px rgba(0, 127, 255, 0.3);
-        }
-      `}</style>
-          max-width: 480px;
-          margin: 0 auto;
-          width: 100%;
         }
         .results-grid {
           display: flex;
