@@ -4,7 +4,7 @@ import logoImg from './assets/logo.png';
 import { supabase } from './supabase';
 
 export default function RegisterPage({ onBack }) {
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState('');
@@ -44,7 +44,10 @@ export default function RegisterPage({ onBack }) {
       email: form.email,
       password: form.password,
       options: {
-        data: { name: form.name },
+        data: { 
+          name: form.name,
+          phone: form.phone
+        },
       },
     });
 
@@ -57,11 +60,8 @@ export default function RegisterPage({ onBack }) {
       return;
     }
 
-    if (data.user && !data.session) {
-      setSuccess(true);
-      return;
-    }
-
+    // After success, we show the success screen. 
+    // If auto-confirm is enabled in Supabase, the user is already logged in.
     setSuccess(true);
   };
 
@@ -101,8 +101,8 @@ export default function RegisterPage({ onBack }) {
             Registrasi Berhasil! 🎉
           </h2>
           <p style={{ fontSize: 13, color: '#64748b', margin: '0 0 24px', lineHeight: 1.7 }}>
-            Kami telah mengirim link verifikasi ke <strong style={{ color: '#0f172a' }}>{form.email}</strong>.<br />
-            Silakan cek email kamu untuk mengaktifkan akun.
+            Akun kamu telah berhasil didaftarkan.<br />
+            Sekarang kamu bisa langsung masuk dan mulai mencari formasi impianmu.
           </p>
           <button
             onClick={onBack}
@@ -232,6 +232,33 @@ export default function RegisterPage({ onBack }) {
               value={form.name}
               onChange={handleChange}
               placeholder="Masukkan nama lengkap"
+              required
+              style={{
+                width: '100%', padding: '13px 14px', borderRadius: 12,
+                border: '2px solid #e2e8f0',
+                fontSize: 14, fontWeight: 600, color: '#0f172a',
+                outline: 'none', background: '#f8fafc',
+                boxSizing: 'border-box', fontFamily: 'inherit',
+                transition: 'border-color 0.2s',
+              }}
+            />
+          </div>
+
+          {/* Phone */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 800, color: '#475569', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.8 }}>
+              Nomor Telepon (WhatsApp)
+            </label>
+            <input
+              id="reg-phone"
+              name="phone"
+              type="tel"
+              value={form.phone}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9]/g, '');
+                setForm({ ...form, phone: val });
+              }}
+              placeholder="Contoh: 08123456789"
               required
               style={{
                 width: '100%', padding: '13px 14px', borderRadius: 12,
