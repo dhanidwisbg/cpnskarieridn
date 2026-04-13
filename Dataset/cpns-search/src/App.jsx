@@ -17,7 +17,14 @@ const INVALID_STARTS = [
   'BADAN KEPEGAWAIAN', 'BADAN KARANTINA', 'BADAN INFORMASI', 'DITETAPKAN DI',
   'KEPADA YTH', 'DI TEMPAT', 'A.N.', 'PLT.', 'PLH.', 'KEMENTERIAN DESA',
   'KEPALA BADAN', 'PEJABAT', 'DIREKTUR', 'SALINAN', 'MENTERI', 'PEMBINA',
-  'DI KABUPATEN', 'DI KOTA', 'DI KECAMATAN',
+  'DI KABUPATEN', 'DI KOTA', 'DI KECAMATAN', 'RINCIAN KEBUTUHAN', 'UNTUK PENGADAAN',
+  'UNIT KERJA', 'PERSYARATAN KUALIFIKASI', 'TAHUN ANGGARAN'
+];
+
+const JUNK_KEYWORDS = [
+  'NO NAMA JABATAN', 'JUMLAH KEBUTUHAN', 'UNIT PENEMPATAN', 'KUALIFIKASI PENDIDIKAN',
+  'ALOKASI FORMASI', 'RINCIAN KEBUTUHAN', 'UNTUK PENGADAAN', 'UNIT KERJA',
+  'PERSYARATAN KUALIFIKASI', 'RINCIAN PENETAPAN'
 ];
 
 const MAJOR_KEYWORDS = [
@@ -45,12 +52,16 @@ const isLikelyMajor = (normalized) => {
 
 const isRawValid = (raw) => {
   if (!raw || raw.trim().length < 4) return false;
-  if (raw.trim().length > 200) return false;
+  if (raw.trim().length > 250) return false;
   const upper = raw.trim().toUpperCase();
+  
+  // 1. Starts with check
   if (INVALID_STARTS.some(p => upper.startsWith(p))) return false;
+  
+  // 2. Contains check (for common header strings that might appear anywhere)
+  if (JUNK_KEYWORDS.some(k => upper.includes(k))) return false;
+
   // Khusus "DI " yang diikuti nama (seringkali tanda tangan)
-  // D-I valid biasanya diikuti spasi lalu nama jurusan.
-  // Tapi kalau setelah "DI " cuma 1 kata dan tidak ada keyword major, tolak.
   if (upper.startsWith('DI ')) {
     const after = upper.slice(3).trim();
     if (!MAJOR_KEYWORDS.some(k => after.includes(k))) return false;
