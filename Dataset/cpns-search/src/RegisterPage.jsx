@@ -102,7 +102,7 @@ export default function RegisterPage({ onBack }) {
           </h2>
           <p style={{ fontSize: 13, color: '#64748b', margin: '0 0 24px', lineHeight: 1.7 }}>
             Akun kamu telah berhasil didaftarkan.<br />
-            Sekarang kamu bisa langsung masuk dan mulai mencari formasi impianmu.
+            <strong>Mohon tunggu proses verifikasi oleh admin</strong> sebelum kamu bisa mulai mencari formasi.
           </p>
           <button
             onClick={onBack}

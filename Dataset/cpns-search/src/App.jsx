@@ -231,7 +231,7 @@ const cleanInstansi = (name) => {
 };
 
 
-function App({ user, onLogout, onUpgrade }) {
+function App({ user, userProfile, onLogout, onUpgrade, onOpenAdmin }) {
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(30);
   const [selectedCategory, setSelectedCategory] = useState('Semua');
@@ -766,7 +766,21 @@ function App({ user, onLogout, onUpgrade }) {
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         boxShadow: '0 -4px 20px rgba(0,0,0,0.06)'
       }}>
-        <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>© CPNSkarier</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>© CPNSkarier</span>
+          {userProfile?.role === 'admin' && (
+            <button 
+              onClick={onOpenAdmin}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 5, border: 'none', background: '#eff6ff', 
+                borderRadius: 999, padding: '6px 12px', cursor: 'pointer', color: '#007FFF', 
+                fontSize: 11, fontWeight: 700, fontFamily: 'inherit'
+              }}
+            >
+              <ShieldCheck size={12} /> Dashboard Admin
+            </button>
+          )}
+        </div>
         {user && (
           <button
             id="logout-btn"
@@ -798,6 +812,13 @@ function App({ user, onLogout, onUpgrade }) {
         }
         .results-section {
           padding: 20px 16px 100px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        /* Badge highlight for admin users if needed */
+        .admin-glow {
+          box-shadow: 0 0 15px rgba(0, 127, 255, 0.3);
+        }
+      `}</style>
           max-width: 480px;
           margin: 0 auto;
           width: 100%;
