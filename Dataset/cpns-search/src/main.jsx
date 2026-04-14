@@ -78,7 +78,12 @@ function Root() {
       fetchProfile(user.id);
     } else if (user === null) {
       setProfile(null);
-      setPage('landing');
+      // If we are on /admin, show login instead of landing
+      if (window.location.pathname === '/admin') {
+        setPage('login');
+      } else {
+        setPage('landing');
+      }
     }
   }, [user]);
 
