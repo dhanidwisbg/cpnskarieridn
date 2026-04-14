@@ -16,17 +16,31 @@ function Root() {
   const [page, setPage] = useState('landing'); // 'landing' | 'login' | 'register' | 'app' | 'purchase' | 'admin'
   const [loadingProfile, setLoadingProfile] = useState(false);
 
+  // Sync state with URL path
+  const navigate = (newPage) => {
+    setPage(newPage);
+    const path = newPage === 'admin' ? '/admin' : '/';
+    window.history.pushState({ page: newPage }, '', path);
+  };
+
   useEffect(() => {
     let mounted = true;
 
     const initAuth = async () => {
+      // Detect initial path
+      const initialPath = window.location.pathname;
+      const targetPage = initialPath === '/admin' ? 'admin' : 'app';
+
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (mounted) {
           setUser(session?.user ?? null);
           if (session?.user) {
-            setPage('app');
+            setPage(targetPage);
             fetchProfile(session.user.id);
+          } else {
+            // If going to /admin but not logged in, keep track so we can redirect after login
+            if (initialPath === '/admin') setPage('login');
           }
         }
       } catch {
@@ -36,26 +50,45 @@ function Root() {
 
     initAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (mounted) {
         setUser(session?.user ?? null);
-        if (session?.user) {
-          setPage('app');
-          fetchProfile(session.user.id);
-        } else {
-          setProfile(null);
-          setPage('landing');
-        }
       }
     });
+
+    // Handle browser back/forward buttons
+    const handlePopState = (e) => {
+      const path = window.location.pathname;
+      setPage(path === '/admin' ? 'admin' : 'app');
+    };
+    window.addEventListener('popstate', handlePopState);
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
+      window.removeEventListener('popstate', handlePopState);
     };
   }, []);
 
+  // Fetch profile whenever user changes
+  useEffect(() => {
+    if (user) {
+      const target = window.location.pathname === '/admin' ? 'admin' : 'app';
+      setPage(target);
+      fetchProfile(user.id);
+    } else if (user === null) {
+      setProfile(null);
+      setPage('landing');
+    }
+  }, [user]);
+
   const fetchProfile = async (userId) => {
+    // Handle dummy admin
+    if (userId === 'dummy-admin-id') {
+      setProfile({ is_verified: true, role: 'admin' });
+      return;
+    }
+
     setLoadingProfile(true);
     const { data, error } = await supabase
       .from('user_profiles')
@@ -74,6 +107,7 @@ function Root() {
     setUser(null);
     setProfile(null);
     setPage('landing');
+    window.history.pushState({}, '', '/');
   };
 
   // Loading
@@ -100,21 +134,21 @@ function Root() {
 
   // Admin Dashboard
   if (page === 'admin' && profile?.role === 'admin') {
-    return <AdminDashboard onBack={() => setPage('app')} />;
+    return <AdminDashboard onBack={() => navigate('app')} />;
   }
 
   // Logged in & Verified — Main App Area
   return (
     <>
       {page === 'purchase' ? (
-        <PurchasePage user={user} onBack={() => setPage('app')} />
+        <PurchasePage user={user} onBack={() => navigate('app')} />
       ) : (
         <App 
           user={user} 
           userProfile={profile}
           onLogout={handleLogout} 
           onUpgrade={() => setPage('purchase')} 
-          onOpenAdmin={() => setPage('admin')}
+          onOpenAdmin={() => navigate('admin')}
         />
       )}
     </>

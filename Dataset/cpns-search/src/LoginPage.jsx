@@ -20,6 +20,20 @@ export default function LoginPage({ onLogin, onRegister }) {
     setLoading(true);
     setError('');
 
+    // Dummy Admin Login Check
+    if (form.email === 'admin' && form.password === 'admin') {
+      setTimeout(() => {
+        setLoading(false);
+        onLogin({ 
+          id: 'dummy-admin-id', 
+          email: 'admin@cpnskarier.id', 
+          user_metadata: { full_name: 'Administrator' },
+          isDummy: true 
+        });
+      }, 500);
+      return;
+    }
+
     const { data, error: authError } = await supabase.auth.signInWithPassword({
       email: form.email,
       password: form.password,
