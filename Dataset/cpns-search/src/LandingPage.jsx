@@ -307,7 +307,7 @@ export default function LandingPage({ onLogin }) {
               <div className="hero-stat"><div className="hero-stat-num">Rp39rb</div><div className="hero-stat-label">Lifetime</div></div>
             </div>
             <div className="float-cards">
-              {[['🏦','Kementerian Keuangan','S-1 Akuntansi'],['⚖️','Mahkamah Agung','S-1 Ilmu Hukum'],['💻','BSSN','S-1 Teknik Informatika'],['🏥','Kemenkes RI','S-1 Kesehatan Masyarakat']].map(([icon, name, major]) => (
+              {[['🏦', 'Kementerian Keuangan', 'S-1 Akuntansi'], ['⚖️', 'Mahkamah Agung', 'S-1 Ilmu Hukum'], ['💻', 'BSSN', 'S-1 Teknik Informatika'], ['🏥', 'Kemenkes RI', 'S-1 Kesehatan Masyarakat']].map(([icon, name, major]) => (
                 <div className="float-card" key={name}>
                   <span className="float-card-icon">{icon}</span>
                   <div className="float-card-text">{name}<small>{major}</small><span className="float-card-badge">✓ Ada Formasi</span></div>
@@ -340,9 +340,9 @@ export default function LandingPage({ onLogin }) {
             </div>
             <div className="features-grid">
               {[
-                ['blue','🔍','Pencarian Cerdas','Cari formasi berdasarkan jurusan, instansi, atau jenjang pendidikan dalam hitungan detik. Didukung fuzzy search agar tetap menemukan hasil walau ada typo.'],
-                ['purple','📄','Akses Dokumen Resmi','Buka langsung file PDF pengumuman formasi dari setiap instansi yang membuka lowongan. Tidak perlu cari manual di website masing-masing instansi.'],
-                ['green','🎯','Filter Pintar','Filter berdasarkan kategori instansi (Pusat/Daerah), jenjang pendidikan (S1, S2, D3, dll), dan nama instansi spesifik untuk hasil yang lebih terarah.'],
+                ['blue', '🔍', 'Pencarian Cerdas', 'Cari formasi berdasarkan jurusan, instansi, atau jenjang pendidikan dalam hitungan detik. Didukung fuzzy search agar tetap menemukan hasil walau ada typo.'],
+                ['purple', '📄', 'Akses Dokumen Resmi', 'Buka langsung file PDF pengumuman formasi dari setiap instansi yang membuka lowongan. Tidak perlu cari manual di website masing-masing instansi.'],
+                ['green', '🎯', 'Filter Pintar', 'Filter berdasarkan kategori instansi (Pusat/Daerah), jenjang pendidikan (S1, S2, D3, dll), dan nama instansi spesifik untuk hasil yang lebih terarah.'],
               ].map(([color, icon, title, desc], i) => (
                 <div className={`feature-card reveal${i > 0 ? ` reveal-delay-${i}` : ''}`} key={title}>
                   <div className={`feature-icon-wrap ${color}`}>{icon}</div>
@@ -364,9 +364,9 @@ export default function LandingPage({ onLogin }) {
             </div>
             <div className="steps-container">
               {[
-                ['Daftar & Login','Buat akun gratis dalam 30 detik. Cukup email dan password — tidak butuh data tambahan.'],
-                ['Cari Formasi','Ketik jurusan kamu dan lihat semua instansi yang membuka formasi untukmu — filter sesuai kebutuhan.'],
-                ['Buka Dokumen','Klik kartu formasi dan langsung buka dokumen PDF resmi instansi tersebut. Cek persyaratan dan langsung daftar!'],
+                ['Daftar & Login', 'Buat akun gratis dalam 30 detik. Cukup email dan password — tidak butuh data tambahan.'],
+                ['Cari Formasi', 'Ketik jurusan kamu dan lihat semua instansi yang membuka formasi untukmu — filter sesuai kebutuhan.'],
+                ['Buka Dokumen', 'Klik kartu formasi dan langsung buka dokumen PDF resmi instansi tersebut. Cek persyaratan dan langsung daftar!'],
               ].map(([title, desc], i) => (
                 <div className={`step-card reveal${i > 0 ? ` reveal-delay-${i}` : ''}`} key={title}>
                   <div className="step-num-wrap">
@@ -400,7 +400,7 @@ export default function LandingPage({ onLogin }) {
                 </div>
                 <div className="pricing-body">
                   <ul className="pricing-benefits">
-                    {['Akses penuh ke semua formasi CPNS 2024','Download dokumen PDF tanpa batasan','Filter by instansi, kategori, dan jurusan','Data diperbarui secara berkala','Akses seumur hidup (tidak perlu langganan)'].map((b) => (
+                    {['Akses penuh ke semua formasi CPNS 2024', 'Download dokumen PDF tanpa batasan', 'Filter by instansi, kategori, dan jurusan', 'Data diperbarui secara berkala', 'Akses seumur hidup (tidak perlu langganan)'].map((b) => (
                       <li className="pricing-benefit" key={b}><span className="benefit-check">✅</span>{b}</li>
                     ))}
                   </ul>
@@ -421,10 +421,10 @@ export default function LandingPage({ onLogin }) {
             </div>
             <div className="faq-list">
               {[
-                ['faq1','Apakah data formasi yang tersedia resmi?','Ya, semua data bersumber dari dokumen PDF resmi CPNS 2024 yang diterbitkan oleh masing-masing instansi pemerintah. Kami mengompilasi data ini agar mudah kamu akses dalam satu platform.'],
-                ['faq2','Apakah akses berlaku seumur hidup?','Ya, cukup bayar sekali dan akses tidak akan kedaluwarsa. Tidak ada biaya langganan bulanan atau tahunan. Bayar satu kali, nikmati selamanya.'],
-                ['faq3','Metode pembayaran apa yang tersedia?','Pembayaran menggunakan Midtrans — mendukung transfer bank (BCA, BNI, BRI, Mandiri), QRIS, e-wallet (GoPay, OVO, Dana, ShopeePay), dan kartu kredit/debit.'],
-                ['faq4','Apakah ada versi gratis?','Kamu bisa mendaftar gratis dan melihat halaman aplikasi, namun hasil pencarian formasi CPNS memerlukan akses Premium. Dengan hanya Rp 39.000, kamu sudah bisa mengakses seluruh database formasi secara penuh.'],
+                ['faq1', 'Apakah data formasi yang tersedia resmi?', 'Ya, semua data bersumber dari dokumen PDF resmi CPNS 2024 yang diterbitkan oleh masing-masing instansi pemerintah. Kami mengompilasi data ini agar mudah kamu akses dalam satu platform.'],
+                ['faq2', 'Apakah akses berlaku seumur hidup?', 'Ya, cukup bayar sekali dan akses tidak akan kedaluwarsa. Tidak ada biaya langganan bulanan atau tahunan. Bayar satu kali, nikmati selamanya.'],
+                ['faq3', 'Metode pembayaran apa yang tersedia?', 'Pembayaran menggunakan Midtrans — mendukung transfer bank (BCA, BNI, BRI, Mandiri), QRIS, e-wallet (GoPay, OVO, Dana, ShopeePay), dan kartu kredit/debit.'],
+                ['faq4', 'Apakah ada versi gratis?', 'Kamu bisa mendaftar gratis dan melihat halaman aplikasi, namun hasil pencarian formasi CPNS memerlukan akses Premium. Dengan hanya Rp 39.000, kamu sudah bisa mengakses seluruh database formasi secara penuh.'],
               ].map(([id, q, a]) => (
                 <div className={`faq-item reveal${openFaq === id ? ' open' : ''}`} key={id}>
                   <button className="faq-question" onClick={() => toggleFaq(id)}>
@@ -476,8 +476,8 @@ export default function LandingPage({ onLogin }) {
               <div>
                 <div className="footer-links-title">Legal</div>
                 <ul className="footer-links">
-                  <li><button onClick={onLogin} style={{background:'none',border:'none',color:'rgba(255,255,255,.55)',cursor:'pointer',fontFamily:'inherit',fontSize:13,padding:0}}>Syarat &amp; Ketentuan</button></li>
-                  <li><button onClick={onLogin} style={{background:'none',border:'none',color:'rgba(255,255,255,.55)',cursor:'pointer',fontFamily:'inherit',fontSize:13,padding:0}}>Kebijakan Privasi</button></li>
+                  <li><a href='/Syarat dan Ketentuan CPNSKarier.docx' style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.55)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, padding: 0 }}>Syarat &amp; Ketentuan</a></li>
+                  <li><a href='/Kebijakan Privasi CPNS Karier Indonesia.docx' style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.55)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, padding: 0 }}>Kebijakan Privasi</a></li>
                   <li><a href="mailto:cpnskarierindonesia@gmail.com">Kontak</a></li>
                 </ul>
               </div>
@@ -485,7 +485,8 @@ export default function LandingPage({ onLogin }) {
                 <div className="footer-links-title">Hubungi Kami</div>
                 <ul className="footer-links">
                   <li><a href="mailto:cpnskarierindonesia@gmail.com">cpnskarierindonesia@gmail.com</a></li>
-                  <li><button onClick={onLogin} style={{background:'none',border:'none',color:'rgba(255,255,255,.55)',cursor:'pointer',fontFamily:'inherit',fontSize:13,padding:0}}>Buka Aplikasi →</button></li>
+                  <li><a>+62 811 7007 5005</a></li>
+                  <li><button onClick={onLogin} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.55)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, padding: 0 }}>Buka Aplikasi →</button></li>
                 </ul>
               </div>
             </div>
