@@ -409,24 +409,23 @@ function App({ user, userProfile, onLogout, onUpgrade, onOpenAdmin }) {
             </div>
           </div>
 
-          {/* Paywall CTA */}
+          {/* Waiting for Verification CTA */}
           <div style={{ marginTop: 32, textAlign: 'center' }}>
             <div style={{ background: 'white', borderRadius: 24, border: '1px solid #f1f5f9', padding: '32px 24px', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
-              <div style={{ width: 64, height: 64, background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ea580c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+              <div style={{ width: 64, height: 64, background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               </div>
-              <h2 style={{ fontSize: 20, fontWeight: 900, color: '#0f172a', margin: '0 0 10px' }}>Hasil Pencarian Terkunci</h2>
+              <h2 style={{ fontSize: 20, fontWeight: 900, color: '#0f172a', margin: '0 0 10px' }}>Menunggu Verifikasi Admin</h2>
               <p style={{ fontSize: 13, color: '#64748b', margin: '0 0 24px', lineHeight: 1.7 }}>
-                Upgrade ke Premium untuk melihat seluruh hasil pencarian dan mengunduh dokumen formasi CPNS 2024.
+                Akun anda menunggu diverifikasi oleh admin.
               </p>
               <button
-                onClick={onUpgrade}
+                onClick={onLogout}
                 style={{ width: '100%', padding: '15px', borderRadius: 14, background: 'linear-gradient(135deg, #0050CC, #007FFF)', color: 'white', border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 800, fontFamily: 'inherit', boxShadow: '0 6px 20px rgba(0,127,255,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s' }}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
-                Upgrade Premium — Rp 39.000
+                <LogOut size={18} />
+                Kembali ke Halaman Login
               </button>
-              <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 12, fontWeight: 500 }}>Sekali bayar · Akses seumur hidup</p>
             </div>
           </div>
         </div>

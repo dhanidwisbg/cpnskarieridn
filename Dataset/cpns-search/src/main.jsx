@@ -8,6 +8,8 @@ import RegisterPage from './RegisterPage.jsx'
 import PurchasePage from './PurchasePage.jsx'
 import WaitingVerification from './WaitingVerification.jsx'
 import AdminDashboard from './AdminDashboard.jsx'
+import TermsPage from './TermsPage.jsx'
+import PrivacyPage from './PrivacyPage.jsx'
 import { supabase } from './supabase'
 
 function Root() {
@@ -19,7 +21,10 @@ function Root() {
   // Sync state with URL path
   const navigate = (newPage) => {
     setPage(newPage);
-    const path = newPage === 'admin' ? '/admin' : '/';
+    let path = '/';
+    if (newPage === 'admin') path = '/admin';
+    else if (newPage === 'terms') path = '/syarat-ketentuan';
+    else if (newPage === 'privacy') path = '/kebijakan-privasi';
     window.history.pushState({ page: newPage }, '', path);
   };
 
@@ -29,7 +34,10 @@ function Root() {
     const initAuth = async () => {
       // Detect initial path
       const initialPath = window.location.pathname;
-      const targetPage = initialPath === '/admin' ? 'admin' : 'app';
+      let targetPage = 'app';
+      if (initialPath === '/admin') targetPage = 'admin';
+      else if (initialPath === '/syarat-ketentuan') targetPage = 'terms';
+      else if (initialPath === '/kebijakan-privasi') targetPage = 'privacy';
 
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -39,8 +47,10 @@ function Root() {
             setPage(targetPage);
             fetchProfile(session.user.id);
           } else {
-            // If going to /admin but not logged in, keep track so we can redirect after login
+            // Keep track so we can redirect after login if needed
             if (initialPath === '/admin') setPage('login');
+            else if (initialPath === '/syarat-ketentuan') setPage('terms');
+            else if (initialPath === '/kebijakan-privasi') setPage('privacy');
           }
         }
       } catch {
@@ -59,7 +69,10 @@ function Root() {
     // Handle browser back/forward buttons
     const handlePopState = (e) => {
       const path = window.location.pathname;
-      setPage(path === '/admin' ? 'admin' : 'app');
+      if (path === '/admin') setPage('admin');
+      else if (path === '/syarat-ketentuan') setPage('terms');
+      else if (path === '/kebijakan-privasi') setPage('privacy');
+      else setPage('landing'); // Simplify fallback
     };
     window.addEventListener('popstate', handlePopState);
 
@@ -73,17 +86,20 @@ function Root() {
   // Fetch profile whenever user changes
   useEffect(() => {
     if (user) {
-      const target = window.location.pathname === '/admin' ? 'admin' : 'app';
+      const path = window.location.pathname;
+      let target = 'app';
+      if (path === '/admin') target = 'admin';
+      else if (path === '/syarat-ketentuan') target = 'terms';
+      else if (path === '/kebijakan-privasi') target = 'privacy';
       setPage(target);
       fetchProfile(user.id);
     } else if (user === null) {
       setProfile(null);
-      // If we are on /admin, show login instead of landing
-      if (window.location.pathname === '/admin') {
-        setPage('login');
-      } else {
-        setPage('landing');
-      }
+      const path = window.location.pathname;
+      if (path === '/admin') setPage('login');
+      else if (path === '/syarat-ketentuan') setPage('terms');
+      else if (path === '/kebijakan-privasi') setPage('privacy');
+      else setPage('landing');
     }
   }, [user]);
 
@@ -129,8 +145,14 @@ function Root() {
   if (!user) {
     if (page === 'register') return <RegisterPage onBack={() => setPage('login')} />;
     if (page === 'login')    return <LoginPage onLogin={(u) => setUser(u)} onRegister={() => setPage('register')} onBack={() => setPage('landing')} />;
-    return <LandingPage onLogin={() => setPage('login')} />;
+    if (page === 'terms')    return <TermsPage onBack={() => navigate('landing')} />;
+    if (page === 'privacy')  return <PrivacyPage onBack={() => navigate('landing')} />;
+    return <LandingPage onLogin={() => setPage('login')} onTermsClick={() => navigate('terms')} onPrivacyClick={() => navigate('privacy')} />;
   }
+
+  // Handle docs for logged-in users too
+  if (page === 'terms') return <TermsPage onBack={() => navigate('app')} />;
+  if (page === 'privacy') return <PrivacyPage onBack={() => navigate('app')} />;
 
   // Logged in but not verified (and not an admin)
   if (profile && !profile.is_verified && profile.role !== 'admin') {

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import logoImg from './assets/logo-transparan.png';
 
-export default function LandingPage({ onLogin }) {
+export default function LandingPage({ onLogin, onTermsClick, onPrivacyClick }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
@@ -476,8 +476,8 @@ export default function LandingPage({ onLogin }) {
               <div>
                 <div className="footer-links-title">Legal</div>
                 <ul className="footer-links">
-                  <li><a href='/Syarat dan Ketentuan CPNSKarier.docx' style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.55)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, padding: 0 }}>Syarat &amp; Ketentuan</a></li>
-                  <li><a href='/Kebijakan Privasi CPNS Karier Indonesia.docx' style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.55)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, padding: 0 }}>Kebijakan Privasi</a></li>
+                  <li><button onClick={onTermsClick} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.55)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, padding: 0, textAlign: 'left' }}>Syarat &amp; Ketentuan</button></li>
+                  <li><button onClick={onPrivacyClick} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.55)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, padding: 0, textAlign: 'left' }}>Kebijakan Privasi</button></li>
                   <li><a href="mailto:cpnskarierindonesia@gmail.com">Kontak</a></li>
                 </ul>
               </div>
