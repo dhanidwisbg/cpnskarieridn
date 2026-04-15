@@ -26,7 +26,8 @@ const JUNK_KEYWORDS = [
   'NO NAMA JABATAN', 'JUMLAH KEBUTUHAN', 'UNIT PENEMPATAN', 'KUALIFIKASI PENDIDIKAN',
   'ALOKASI FORMASI', 'RINCIAN KEBUTUHAN', 'UNTUK PENGADAAN', 'UNIT KERJA',
   'PERSYARATAN KUALIFIKASI', 'RINCIAN PENETAPAN', 'JABATAN YANG DI',
-  'PENGHASILAN MINIMAL', 'JENIS FORMASI', 'NAMA JABATAN', 'MA JABATAN'
+  'PENGHASILAN MINIMAL', 'JENIS FORMASI', 'NAMA JABATAN', 'MA JABATAN',
+  'KEMENTERIAN', 'KABUPATEN', 'PROVINSI', 'PANITIA PUSAT', 'REKRUTMEN', 'CASN'
 ];
 
 const MAJOR_KEYWORDS = [
@@ -43,6 +44,10 @@ const MAJOR_KEYWORDS = [
 
 const isLikelyMajor = (normalized) => {
   const upper = normalized.toUpperCase();
+  // 0. Pastikan tidak mengandung kata-kata jurusan palsu/sampah
+  if (JUNK_KEYWORDS.some(k => upper.includes(k))) return false;
+  if (INVALID_STARTS.some(p => upper.startsWith(p))) return false;
+
   // Jika mengandung kata kunci jurusan, hampir pasti ini jurusan
   if (MAJOR_KEYWORDS.some(k => upper.includes(k))) return true;
   // Jika sangat pendek (misal "S-1"), anggap tidak valid jika tidak ada keyword
