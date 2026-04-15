@@ -338,9 +338,8 @@ function App({ user, userProfile, onLogout, onUpgrade, onOpenAdmin }) {
     return filtered;
   }, [expandedData, selectedCategory, selectedEducation, selectedInstansi]);
 
-  // Search: setiap kata di query harus ada di jurusan atau instansi (substring match)
-  // Contoh: "agro teknologi" → harus ada "agro" DAN "teknologi" di jurusan/instansi
-  // Ini mencegah "bioteknologi" muncul saat search "agroteknologi"
+  // Search: setiap kata di query harus ada di jurusan
+  // Pencarian kini difokuskan HANYA pada nama jurusan, sehingga "hukum" tidak memunculkan "Kementerian Hukum dan HAM" jika jurusannya bukan hukum.
   const results = useMemo(() => {
     const q = query.trim();
     if (!q) return baseResults;
@@ -349,8 +348,8 @@ function App({ user, userProfile, onLogout, onUpgrade, onOpenAdmin }) {
     const tokens = q.toLowerCase().split(/[\s\-\/]+/).filter(Boolean);
 
     return baseResults.filter(item => {
-      const haystack = (item.jurusan + ' ' + item.instansi).toLowerCase();
-      // Semua token harus ada di haystack (AND logic)
+      const haystack = item.jurusan.toLowerCase();
+      // Semua token harus ada di haystack jurusan (AND logic)
       return tokens.every(token => haystack.includes(token));
     });
   }, [query, baseResults]);
@@ -484,7 +483,7 @@ function App({ user, userProfile, onLogout, onUpgrade, onOpenAdmin }) {
             type="text"
             value={query}
             onChange={e => { setQuery(e.target.value); setLimit(30); }}
-            placeholder="Cari jurusan atau instansi..."
+            placeholder="Cari jurusan..."
             style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: 14, fontWeight: 600, color: '#0f172a' }}
           />
           {query && <button onClick={() => setQuery('')} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}><X size={16} color="#94a3b8" /></button>}
