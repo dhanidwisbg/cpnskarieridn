@@ -114,6 +114,7 @@ const cleanOcrErrors = (str) => {
     .replace(/\bYang\s+Lulus\s+Sebelum\b.*/gi, '') // Potong kalimat kotor
     .replace(/\bWaikabubak\b.*/gi, '')       // Potong nama daerah
     .replace(/\bMasyarakat\s+Masyarakat\b/gi, 'Masyarakat') // Hapus duplikasi
+    .replace(/\b(?:AHLI\s+(?:PERTAMA|MUDA|MADYA|UTAMA)|TERAMPIL|MAHIR|PEMULA)\b.*/gi, '') // Potong tingkat jabatan
     .trim();
 };
 
