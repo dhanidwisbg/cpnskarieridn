@@ -27,7 +27,8 @@ const JUNK_KEYWORDS = [
   'ALOKASI FORMASI', 'RINCIAN KEBUTUHAN', 'UNTUK PENGADAAN', 'UNIT KERJA',
   'PERSYARATAN KUALIFIKASI', 'RINCIAN PENETAPAN', 'JABATAN YANG DI',
   'PENGHASILAN MINIMAL', 'JENIS FORMASI', 'NAMA JABATAN', 'MA JABATAN',
-  'KEMENTERIAN', 'KABUPATEN', 'PROVINSI', 'PANITIA PUSAT', 'REKRUTMEN', 'CASN'
+  'KEMENTERIAN', 'KABUPATEN', 'PROVINSI', 'PANITIA PUSAT', 'REKRUTMEN', 'CASN',
+  'BIRO', 'DEPUTI', 'DIREKTORAT', 'SEKRETARIAT', 'BALAI', 'RINCIAN ALOKASI'
 ];
 
 const MAJOR_KEYWORDS = [
@@ -84,11 +85,11 @@ const isRawValid = (raw) => {
 
 // Regex: gelar di awal (D-I, D-III, S-1, dsb)
 // Khusus untuk DI, kita buat lebih ketat agar tidak tertukar dengan kata depan "DI"
-const EDU_PREFIX_RE = /^(S[-–]?\s*[123]|D[-–]?\s*(?:IV|III|II)|D[-–]\s*I|D\.\s*I|D\s+I)\s+/i;
+const EDU_PREFIX_RE = /^(S[-–]?\s*[123]|D[-–]?\s*(?:IV|III|II)|D[-–]\s*I|D\s+I|PROFESI|(?:SMA|SMK|SLTA|SMU|MA|MAN)(?:\s+IPA|\s+IPS)?)\s+/i;
 // Regex: hanya gelar (standalone)
-const EDU_ONLY_RE = /^(S[-–]?\s*[123]|D[-–]?\s*(?:IV|III|II)|D[-–]\s*I|D\s+I)\s*$/i;
+const EDU_ONLY_RE = /^(S[-–]?\s*[123]|D[-–]?\s*(?:IV|III|II)|D[-–]\s*I|D\s+I|PROFESI|(?:SMA|SMK|SLTA|SMU|MA|MAN)(?:\s+IPA|\s+IPS)?)\s*$/i;
 // Regex: gelar di akhir string
-const EDU_TRAIL_RE = /\s+(S[-–]?\s*[123]|D[-–]?\s*(?:IV|III|II)|D[-–]\s*I|D\s+I)\s*$/i;
+const EDU_TRAIL_RE = /\s+(S[-–]?\s*[123]|D[-–]?\s*(?:IV|III|II)|D[-–]\s*I|D\s+I|PROFESI|(?:SMA|SMK|SLTA|SMU|MA|MAN)(?:\s+IPA|\s+IPS)?)\s*$/i;
 
 const normalizeEdu = (s) => s.trim()
   .replace(/S[-–]?\s*1/i, 'S-1')
@@ -97,13 +98,16 @@ const normalizeEdu = (s) => s.trim()
   .replace(/D[-–]?\s*(IV|4)/i, 'D-IV')
   .replace(/D[-–]?\s*(III|3)/i, 'D-III')
   .replace(/D[-–]?\s*(II|2)/i, 'D-II')
-  .replace(/D[-–]?\s*(I|1)/i, 'D-I');
+  .replace(/D[-–]?\s*(I|1)/i, 'D-I')
+  .replace(/^PROFESI$/i, 'Profesi')
+  .replace(/^(SMA|SMK|SLTA|SMU|MA|MAN)/i, m => m.toUpperCase());
 
 const toTitle = (str) => str.toLowerCase()
   .replace(/(?:^|\s)\S/g, c => c.toUpperCase())  // capitalize first letter each word
   .replace(/\bD-Iv\b/g, 'D-IV').replace(/\bD-Iii\b/g, 'D-III')
   .replace(/\bD-Ii\b/g, 'D-II').replace(/\bD-I\b/g, 'D-I')
-  .replace(/\bS-([123])\b/g, (_, n) => `S-${n}`);
+  .replace(/\bS-([123])\b/g, (_, n) => `S-${n}`)
+  .replace(/\b(Sma|Smk|Slta|Smu|Ma|Man)\b/g, m => m.toUpperCase());
 
 const cleanOcrErrors = (str) => {
   return str
@@ -112,6 +116,7 @@ const cleanOcrErrors = (str) => {
     .replace(/\bPe\s+Me\s+Rintah\b.*/gi, '') // Potong sisa string setelah Pe Me Rintah
     .replace(/\bKabupate\s+N\b.*/gi, '')     // Potong sisa string setelah Kabupate N
     .replace(/\bYang\s+Lulus\s+Sebelum\b.*/gi, '') // Potong kalimat kotor
+    .replace(/\bRincian\s+Alokasi\b.*/gi, '') // Potong kalimat kotor
     .replace(/\bWaikabubak\b.*/gi, '')       // Potong nama daerah
     .replace(/\bMasyarakat\s+Masyarakat\b/gi, 'Masyarakat') // Hapus duplikasi
     .replace(/\b(?:AHLI\s+(?:PERTAMA|MUDA|MADYA|UTAMA)|TERAMPIL|MAHIR|PEMULA)\b/gi, '') // Potong tingkat jabatan (tanpa .* agar S-1 di akhir tidak terhapus)
@@ -150,7 +155,7 @@ const normOnePart = (part) => {
 // Pecah segment pada gelar yang muncul DI TENGAH string (bukan di depan)
 // Contoh: "S-1 Teknologi Informasi D-III Rekayasa" → ["S-1 Teknologi Informasi", "D-III Rekayasa"]
 const splitOnInternalDeg = (seg) => {
-  const re = /(S[-–]?\s*[123]|D[-–]?\s*(?:IV|III|II|I|[1-4]))\s/gi;
+  const re = /(S[-–]?\s*[123]|D[-–]?\s*(?:IV|III|II|I|[1-4])|PROFESI|(?:SMA|SMK|SLTA|SMU|MA|MAN)(?:\s+IPA|\s+IPS)?)\s/gi;
   const splitPositions = [];
   let match;
   while ((match = re.exec(seg)) !== null) {
