@@ -105,9 +105,21 @@ const toTitle = (str) => str.toLowerCase()
   .replace(/\bD-Ii\b/g, 'D-II').replace(/\bD-I\b/g, 'D-I')
   .replace(/\bS-([123])\b/g, (_, n) => `S-${n}`);
 
+const cleanOcrErrors = (str) => {
+  return str
+    .replace(/\bTe\s+Knik\b/gi, 'Teknik')
+    .replace(/\bTe\s+Lekomunikasi\b/gi, 'Telekomunikasi')
+    .replace(/\bPe\s+Me\s+Rintah\b.*/gi, '') // Potong sisa string setelah Pe Me Rintah
+    .replace(/\bKabupate\s+N\b.*/gi, '')     // Potong sisa string setelah Kabupate N
+    .replace(/\bYang\s+Lulus\s+Sebelum\b.*/gi, '') // Potong kalimat kotor
+    .replace(/\bWaikabubak\b.*/gi, '')       // Potong nama daerah
+    .replace(/\bMasyarakat\s+Masyarakat\b/gi, 'Masyarakat') // Hapus duplikasi
+    .trim();
+};
+
 // Normalisasi satu segment jurusan (tanpa slash)
 const normOnePart = (part) => {
-  let s = part.trim()
+  let s = cleanOcrErrors(part)
     .replace(/[\s,;\/]+$/, '').trim()   // strip trailing junk
     .replace(/\)+$/, '').trim();        // strip trailing paren
   if (!s || s.length < 3) return null;
