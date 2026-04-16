@@ -15,17 +15,26 @@ import { supabase } from './supabase'
 function Root() {
   const [user, setUser] = useState(undefined); // undefined = loading
   const [profile, setProfile] = useState(null);
-  const [page, setPage] = useState('landing'); // 'landing' | 'login' | 'register' | 'app' | 'purchase' | 'admin'
+  const [page, setPage] = useState('landing');
   const [loadingProfile, setLoadingProfile] = useState(false);
 
   // Sync state with URL path
-  const navigate = (newPage) => {
+  const navigate = (newPage, replace = false) => {
     setPage(newPage);
     let path = '/';
     if (newPage === 'admin') path = '/admin';
     else if (newPage === 'terms') path = '/syarat-ketentuan';
     else if (newPage === 'privacy') path = '/kebijakan-privasi';
-    window.history.pushState({ page: newPage }, '', path);
+    else if (newPage === 'login') path = '/login';
+    else if (newPage === 'register') path = '/register';
+
+    if (window.location.pathname !== path) {
+      if (replace) {
+        window.history.replaceState({ page: newPage }, '', path);
+      } else {
+        window.history.pushState({ page: newPage }, '', path);
+      }
+    }
   };
 
   useEffect(() => {
@@ -38,23 +47,29 @@ function Root() {
       if (initialPath === '/admin') targetPage = 'admin';
       else if (initialPath === '/syarat-ketentuan') targetPage = 'terms';
       else if (initialPath === '/kebijakan-privasi') targetPage = 'privacy';
+      else if (initialPath === '/login') targetPage = 'login';
+      else if (initialPath === '/register') targetPage = 'register';
+      else targetPage = 'landing';
 
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (mounted) {
           setUser(session?.user ?? null);
           if (session?.user) {
-            setPage(targetPage);
-            fetchProfile(session.user.id);
+            // let the user effect handle routing
+            if (targetPage !== 'login' && targetPage !== 'register' && targetPage !== 'landing') {
+               setPage(targetPage);
+            }
           } else {
-            // Keep track so we can redirect after login if needed
-            if (initialPath === '/admin') setPage('login');
-            else if (initialPath === '/syarat-ketentuan') setPage('terms');
-            else if (initialPath === '/kebijakan-privasi') setPage('privacy');
+             // Force page on anonymous route
+             setPage(targetPage);
           }
         }
       } catch {
-        if (mounted) setUser(null);
+        if (mounted) {
+           setUser(null);
+           setPage(targetPage);
+        }
       }
     };
 
@@ -72,7 +87,9 @@ function Root() {
       if (path === '/admin') setPage('admin');
       else if (path === '/syarat-ketentuan') setPage('terms');
       else if (path === '/kebijakan-privasi') setPage('privacy');
-      else setPage('landing'); // Simplify fallback
+      else if (path === '/login') setPage('login');
+      else if (path === '/register') setPage('register');
+      else setPage('landing');
     };
     window.addEventListener('popstate', handlePopState);
 
@@ -83,28 +100,32 @@ function Root() {
     };
   }, []);
 
-  // Fetch profile whenever user changes
+  // Handle routing based on user state
   useEffect(() => {
+    if (user === undefined) return;
+
+    const path = window.location.pathname;
+    
     if (user) {
-      const path = window.location.pathname;
       let target = 'app';
       if (path === '/admin') target = 'admin';
       else if (path === '/syarat-ketentuan') target = 'terms';
       else if (path === '/kebijakan-privasi') target = 'privacy';
-      setPage(target);
+      // If user is accessing login or register while logged in, redirect them to app
+      navigate(target, true);
       fetchProfile(user.id);
-    } else if (user === null) {
+    } else {
       setProfile(null);
-      const path = window.location.pathname;
-      if (path === '/admin') setPage('login');
-      else if (path === '/syarat-ketentuan') setPage('terms');
-      else if (path === '/kebijakan-privasi') setPage('privacy');
-      else setPage('landing');
+      if (path === '/admin') navigate('login', true);
+      else if (path === '/syarat-ketentuan') navigate('terms', true);
+      else if (path === '/kebijakan-privasi') navigate('privacy', true);
+      else if (path === '/register') navigate('register', true);
+      else if (path === '/login') navigate('login', true);
+      else navigate('landing', true);
     }
   }, [user]);
 
   const fetchProfile = async (userId) => {
-    // Handle dummy admin
     if (userId === 'dummy-admin-id') {
       setProfile({ is_verified: true, role: 'admin' });
       return;
@@ -127,11 +148,9 @@ function Root() {
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
-    setPage('landing');
-    window.history.pushState({}, '', '/');
+    navigate('landing');
   };
 
-  // Loading
   if (user === undefined || (user && loadingProfile)) {
     return (
       <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", background: '#f8fafc', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -141,30 +160,25 @@ function Root() {
     );
   }
 
-  // Not logged in — routing antar halaman publik
   if (!user) {
-    if (page === 'register') return <RegisterPage onBack={() => setPage('login')} />;
-    if (page === 'login')    return <LoginPage onLogin={(u) => setUser(u)} onRegister={() => setPage('register')} onBack={() => setPage('landing')} />;
+    if (page === 'register') return <RegisterPage onBack={() => navigate('login')} />;
+    if (page === 'login')    return <LoginPage onLogin={(u) => { setUser(u); navigate('app'); }} onRegister={() => navigate('register')} onBack={() => navigate('landing')} />;
     if (page === 'terms')    return <TermsPage onBack={() => navigate('landing')} />;
     if (page === 'privacy')  return <PrivacyPage onBack={() => navigate('landing')} />;
-    return <LandingPage onLogin={() => setPage('login')} onTermsClick={() => navigate('terms')} onPrivacyClick={() => navigate('privacy')} />;
+    return <LandingPage onLogin={() => navigate('login')} onTermsClick={() => navigate('terms')} onPrivacyClick={() => navigate('privacy')} />;
   }
 
-  // Handle docs for logged-in users too
   if (page === 'terms') return <TermsPage onBack={() => navigate('app')} />;
   if (page === 'privacy') return <PrivacyPage onBack={() => navigate('app')} />;
 
-  // Logged in but not verified (and not an admin)
   if (profile && !profile.is_verified && profile.role !== 'admin') {
     return <WaitingVerification user={user} onLogout={handleLogout} />;
   }
 
-  // Admin Dashboard
   if (page === 'admin' && profile?.role === 'admin') {
     return <AdminDashboard onBack={() => navigate('app')} />;
   }
 
-  // Logged in & Verified — Main App Area
   return (
     <>
       {page === 'purchase' ? (
@@ -174,7 +188,7 @@ function Root() {
           user={user} 
           userProfile={profile}
           onLogout={handleLogout} 
-          onUpgrade={() => setPage('purchase')} 
+          onUpgrade={() => navigate('purchase')} 
           onOpenAdmin={() => navigate('admin')}
         />
       )}
