@@ -443,10 +443,20 @@ function App({ user, userProfile, onLogout, onUpgrade, onOpenAdmin }) {
                 Akun anda menunggu diverifikasi oleh admin.
               </p>
               <button
-                onClick={onLogout}
-                style={{ width: '100%', padding: '15px', borderRadius: 14, background: 'linear-gradient(135deg, #0050CC, #007FFF)', color: 'white', border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 800, fontFamily: 'inherit', boxShadow: '0 6px 20px rgba(0,127,255,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s' }}
+                onClick={() => {
+                  const msg = `Hallo kak saya sudah buat akun di CPNSKarierIndonesia untuk akses Smart Search.\n\nIdentitasnya, sebagai berikut :\nEmail : ${user?.email || ''}\n\nMohon konfirmasi aktivasinya ya kak`;
+                  window.open(`https://wa.me/6281170075005?text=${encodeURIComponent(msg)}`, '_blank');
+                }}
+                style={{ width: '100%', padding: '15px', borderRadius: 14, background: 'linear-gradient(135deg, #25D366, #128C7E)', color: 'white', border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 800, fontFamily: 'inherit', boxShadow: '0 6px 20px rgba(37,211,102,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s', marginBottom: 12 }}
               >
-                <LogOut size={18} />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
+                Hubungi Admin
+              </button>
+              <button
+                onClick={onLogout}
+                style={{ width: '100%', padding: '12px', borderRadius: 12, background: '#f8fafc', color: '#64748b', border: '1px solid #e2e8f0', cursor: 'pointer', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, transition: 'all 0.2s' }}
+              >
+                <LogOut size={16} />
                 Kembali ke Halaman Login
               </button>
             </div>
