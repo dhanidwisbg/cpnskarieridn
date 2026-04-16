@@ -444,8 +444,7 @@ function App({ user, userProfile, onLogout, onUpgrade, onOpenAdmin }) {
               </p>
               <button
                 onClick={() => {
-                  const msg = `Hallo kak saya sudah buat akun di CPNSKarierIndonesia untuk akses Smart Search.\n\nIdentitasnya, sebagai berikut :\nEmail :\n\nMohon konfirmasi aktivasinya ya kak`;
-                  window.open(`https://wa.me/6281170075005?text=${encodeURIComponent(msg)}`, '_blank');
+                  window.open('https://wa.me/6281170075005?text=Hallo%20kak%20saya%20sudah%20buat%20akun%20di%20CPNSKarierIndonesia%20untuk%20akses%20Smart%20Search.%0A%0AIdentitasnya,%20sebagai%20berikut%20:%0AEmail%20:%0A%0AMohon%20konfirmasi%20aktivasinya%20ya%20kak%20', '_blank');
                 }}
                 style={{ width: '100%', padding: '15px', borderRadius: 14, background: 'linear-gradient(135deg, #25D366, #128C7E)', color: 'white', border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 800, fontFamily: 'inherit', boxShadow: '0 6px 20px rgba(37,211,102,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s', marginBottom: 12 }}
               >
